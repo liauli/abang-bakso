@@ -41,28 +41,43 @@ extension CollectionReference {
     func setDocumentIfNotExists(for id: String, data: [String: Any]) -> AnyPublisher<Void, FirestoreError> {
             let documentRef = self.document(id)
             
-            return Future { promise in
+            return Future { [weak self] promise in
                 // Check if document already exists
-                documentRef.getDocument { snapshot, error in
-                    if let error = error {
-                        promise(.failure(FirestoreError.snapshotError(error)))
-                    } else if snapshot?.exists == true {
-                        // Document already exists, return a custom error
-                        promise(.failure(FirestoreError.documentExists))
+                self?.handleDataPromise(documentRef, data: data) { isSuccess, error in
+                    if let error = error, !isSuccess {
+                        promise(.failure(error))
                     } else {
-                        // Document does not exist, proceed with adding it
-                        documentRef.setData(data) { error in
-                            if let error = error {
-                                promise(.failure(FirestoreError.snapshotError(error)))
-                            } else {
-                                promise(.success(()))
-                            }
-                        }
+                        promise(.success(()))
                     }
                 }
+                
             }
             .eraseToAnyPublisher()
         }
+    
+    private func handleDataPromise(
+        _ documentRef: DocumentReference,
+        data: [String: Any],
+        completionHandler: @escaping (Bool, FirestoreError?) -> Void
+    ) {
+        documentRef.getDocument { snapshot, error in
+            if let error = error {
+                completionHandler(false, FirestoreError.snapshotError(error))
+            } else if snapshot?.exists == true {
+                // Document already exists, return a custom error
+                completionHandler(false, FirestoreError.documentExists)
+            } else {
+                // Document does not exist, proceed with adding it
+                documentRef.setData(data) { error in
+                    if let error = error {
+                        completionHandler(false, FirestoreError.snapshotError(error))
+                    } else {
+                        completionHandler(true, nil)
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension Query {
