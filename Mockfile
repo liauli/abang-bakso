@@ -1,0 +1,16 @@
+sourceryCommand: null
+sourceryTemplate: null
+unit.tests.mock:
+  sources:
+    include:
+    - ./AbangBakso
+    exclude: []
+  output: ./AbangBaksoTests/Mock.generated.swift
+  targets:
+  - AbangBaksoTests
+  testable:
+  - AbangBakso
+  import:
+  - Combine
+  - FirebaseFirestore
+  - Foundation

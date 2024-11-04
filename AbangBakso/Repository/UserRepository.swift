@@ -9,7 +9,7 @@ import Combine
 import Foundation
 import FirebaseFirestore
 
-protocol UserRepository {
+protocol UserRepository: AutoMockable {
     func create(user: User) -> AnyPublisher<Void, FirestoreError>
     func getProfile() -> AnyPublisher<User, FirestoreError>
     func endSession() -> AnyPublisher<Void, Never>

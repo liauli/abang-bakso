@@ -7,7 +7,8 @@
 
 import SwiftUI
 import SwiftData
-import Firebase
+import FirebaseCore
+import FirebaseFirestore
 
 @main
 struct AbangBaksoApp: App {
