@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: collection, also usertype
-enum Collection: String {
+enum Collection: String, Codable {
     case seller
     case costumer
 }

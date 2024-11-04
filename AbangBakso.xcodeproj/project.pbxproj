@@ -26,9 +26,14 @@
 		206E8B322CD4C4F2004BD8BD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 206E8B2F2CD4C3E3004BD8BD /* GoogleService-Info.plist */; };
 		206E8B352CD4CB82004BD8BD /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 206E8B342CD4CB82004BD8BD /* FirebaseCrashlytics */; };
 		206E8B392CD4CCF9004BD8BD /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206E8B382CD4CCF9004BD8BD /* FirestoreService.swift */; };
+		206E8B3C2CD4CD7F004BD8BD /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206E8B3B2CD4CD7F004BD8BD /* UserModel.swift */; };
 		206E8B3E2CD4DD7F004BD8BD /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206E8B3D2CD4DD7F004BD8BD /* Collection.swift */; };
+		206E8B402CD4DD9C004BD8BD /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206E8B3F2CD4DD9C004BD8BD /* UserRepository.swift */; };
 		206E8B462CD4DDFB004BD8BD /* FirestoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206E8B452CD4DDFB004BD8BD /* FirestoreError.swift */; };
 		206E8B492CD4DE86004BD8BD /* Firestore+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206E8B482CD4DE86004BD8BD /* Firestore+Ext.swift */; };
+		206E8B4C2CD87978004BD8BD /* KeychainFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206E8B4B2CD87978004BD8BD /* KeychainFacade.swift */; };
+		206E8B4F2CD879C7004BD8BD /* KeychainKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206E8B4E2CD879C7004BD8BD /* KeychainKeys.swift */; };
+		206E8B512CD87F0E004BD8BD /* LoginError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206E8B502CD87F0E004BD8BD /* LoginError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,9 +67,14 @@
 		206E8B142CD48D68004BD8BD /* AbangBaksoUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbangBaksoUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		206E8B2F2CD4C3E3004BD8BD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		206E8B382CD4CCF9004BD8BD /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
+		206E8B3B2CD4CD7F004BD8BD /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		206E8B3D2CD4DD7F004BD8BD /* Collection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
+		206E8B3F2CD4DD9C004BD8BD /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		206E8B452CD4DDFB004BD8BD /* FirestoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreError.swift; sourceTree = "<group>"; };
 		206E8B482CD4DE86004BD8BD /* Firestore+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Firestore+Ext.swift"; sourceTree = "<group>"; };
+		206E8B4B2CD87978004BD8BD /* KeychainFacade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainFacade.swift; sourceTree = "<group>"; };
+		206E8B4E2CD879C7004BD8BD /* KeychainKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainKeys.swift; sourceTree = "<group>"; };
+		206E8B502CD87F0E004BD8BD /* LoginError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +133,7 @@
 		206E8AF42CD48D66004BD8BD /* AbangBakso */ = {
 			isa = PBXGroup;
 			children = (
+				206E8B4D2CD879B1004BD8BD /* Constant */,
 				206E8B472CD4DE7A004BD8BD /* Extension */,
 				206E8B3A2CD4CD73004BD8BD /* Model */,
 				206E8B372CD4CCEF004BD8BD /* Service */,
@@ -169,11 +180,19 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		206E8B362CD4CCDB004BD8BD /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				206E8B3F2CD4DD9C004BD8BD /* UserRepository.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
 		206E8B372CD4CCEF004BD8BD /* Service */ = {
 			isa = PBXGroup;
 			children = (
 				206E8B382CD4CCF9004BD8BD /* FirestoreService.swift */,
-				206E8B452CD4DDFB004BD8BD /* FirestoreError.swift */,
+				206E8B4B2CD87978004BD8BD /* KeychainFacade.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -181,6 +200,7 @@
 		206E8B3A2CD4CD73004BD8BD /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				206E8B3B2CD4CD7F004BD8BD /* UserModel.swift */,
 				206E8B3D2CD4DD7F004BD8BD /* Collection.swift */,
 			);
 			path = Model;
@@ -192,6 +212,16 @@
 				206E8B482CD4DE86004BD8BD /* Firestore+Ext.swift */,
 			);
 			path = Extension;
+			sourceTree = "<group>";
+		};
+		206E8B4D2CD879B1004BD8BD /* Constant */ = {
+			isa = PBXGroup;
+			children = (
+				206E8B4E2CD879C7004BD8BD /* KeychainKeys.swift */,
+				206E8B502CD87F0E004BD8BD /* LoginError.swift */,
+				206E8B452CD4DDFB004BD8BD /* FirestoreError.swift */,
+			);
+			path = Constant;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -371,7 +401,12 @@
 				206E8AF82CD48D66004BD8BD /* ContentView.swift in Sources */,
 				206E8B392CD4CCF9004BD8BD /* FirestoreService.swift in Sources */,
 				206E8AFA2CD48D66004BD8BD /* Item.swift in Sources */,
+				206E8B512CD87F0E004BD8BD /* LoginError.swift in Sources */,
+				206E8B4F2CD879C7004BD8BD /* KeychainKeys.swift in Sources */,
+				206E8B402CD4DD9C004BD8BD /* UserRepository.swift in Sources */,
+				206E8B4C2CD87978004BD8BD /* KeychainFacade.swift in Sources */,
 				206E8B3E2CD4DD7F004BD8BD /* Collection.swift in Sources */,
+				206E8B3C2CD4CD7F004BD8BD /* UserModel.swift in Sources */,
 				206E8AF62CD48D66004BD8BD /* AbangBaksoApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

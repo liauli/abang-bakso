@@ -11,4 +11,8 @@ enum FirestoreError: Error {
     case documentExists
     case snapshotError(_ error: Error)
     case modelInitializationFailed
+    case unknownType
+    case failedToSaveUser
+    case failedToGetUser
+    case generalError(_ error: Error)
 }
