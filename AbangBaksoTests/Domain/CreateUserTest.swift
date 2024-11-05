@@ -29,7 +29,7 @@ class CreateUserTests: XCTestCase {
         super.tearDown()
     }
     
-    func test_execute_callsCreateOnUserRepository_andSucceeds() {
+    func testExecuteCallsCreateOnUserRepositorySucceeds() {
         // Arrange
         let user = DummyBuilder.createUser(type: .seller)
         
@@ -46,7 +46,9 @@ class CreateUserTests: XCTestCase {
                 case .failure:
                     XCTFail("Expected success, but got failure.")
                 }
-            }, receiveValue: { })
+            }, receiveValue: { 
+                //no action
+            })
             .store(in: &cancellables)
         
         waitForExpectations(timeout: 1.0, handler: nil)
@@ -55,7 +57,7 @@ class CreateUserTests: XCTestCase {
         Verify(userRepositoryMock, .create(user: .value(user)))
     }
     
-    func test_execute_callsCreateOnUserRepository_andFails() {
+    func testExecute_callsCreateOnUserRepository_andFails() {
         // Arrange
         let user = DummyBuilder.createUser(type: .seller)
         let expectedError = FirestoreError.unknownType
