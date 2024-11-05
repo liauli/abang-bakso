@@ -8,7 +8,7 @@ import Combine
 import Foundation
 import FirebaseFirestore
 
-protocol FirestoreService {
+protocol FirestoreService: AutoMockable {
     func create(id: String, _ data: [String: Any]) -> AnyPublisher<Void, FirestoreError>
     func update(id: String, _ data: [String: Any]) -> AnyPublisher<Void, FirestoreError>
     func startObserving() -> AnyPublisher<[DocumentSnapshot], Never>

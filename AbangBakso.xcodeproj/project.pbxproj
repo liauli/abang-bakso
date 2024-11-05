@@ -38,6 +38,11 @@
 		206E8B822CD8B63C004BD8BD /* FirebaseFirestoreInternal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 206E8B812CD8B63C004BD8BD /* FirebaseFirestoreInternal.framework */; };
 		206E8B842CD8B63C004BD8BD /* FirebaseInstallations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 206E8B832CD8B63C004BD8BD /* FirebaseInstallations.framework */; };
 		206E8B862CD8B63C004BD8BD /* FirebaseSharedSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 206E8B852CD8B63C004BD8BD /* FirebaseSharedSwift.framework */; };
+		206E8B8B2CD8C2E5004BD8BD /* UserRepositoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206E8B8A2CD8C2E5004BD8BD /* UserRepositoryTest.swift */; };
+		206E8B8E2CD8C9B5004BD8BD /* DummyPublisherResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206E8B8D2CD8C9B5004BD8BD /* DummyPublisherResult.swift */; };
+		20FBA6332CD9B3770048AD5C /* DummyBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FBA6322CD9B3770048AD5C /* DummyBuilder.swift */; };
+		20FBA6362CD9B42C0048AD5C /* CreateUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FBA6352CD9B42C0048AD5C /* CreateUser.swift */; };
+		20FBA6392CD9B8CB0048AD5C /* CreateUserTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FBA6382CD9B8CB0048AD5C /* CreateUserTest.swift */; };
 		4F28267BC5603A64C144330F /* Pods_AbangBakso.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3CE5240E410A8AF837AFC0D /* Pods_AbangBakso.framework */; };
 		70623B404F9ECDA092158F6F /* Pods_AbangBakso_AbangBaksoUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3D511700B85A6A8C30E32C7 /* Pods_AbangBakso_AbangBaksoUITests.framework */; };
 /* End PBXBuildFile section */
@@ -97,6 +102,11 @@
 		206E8B812CD8B63C004BD8BD /* FirebaseFirestoreInternal.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseFirestoreInternal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		206E8B832CD8B63C004BD8BD /* FirebaseInstallations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseInstallations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		206E8B852CD8B63C004BD8BD /* FirebaseSharedSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseSharedSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		206E8B8A2CD8C2E5004BD8BD /* UserRepositoryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepositoryTest.swift; sourceTree = "<group>"; };
+		206E8B8D2CD8C9B5004BD8BD /* DummyPublisherResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyPublisherResult.swift; sourceTree = "<group>"; };
+		20FBA6322CD9B3770048AD5C /* DummyBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyBuilder.swift; sourceTree = "<group>"; };
+		20FBA6352CD9B42C0048AD5C /* CreateUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateUser.swift; sourceTree = "<group>"; };
+		20FBA6382CD9B8CB0048AD5C /* CreateUserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateUserTest.swift; sourceTree = "<group>"; };
 		35FF9FED0AF9F5966687C8DB /* Pods-AbangBaksoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbangBaksoTests.release.xcconfig"; path = "Target Support Files/Pods-AbangBaksoTests/Pods-AbangBaksoTests.release.xcconfig"; sourceTree = "<group>"; };
 		57018805830B7DBDA6C7F533 /* Pods-AbangBakso-AbangBaksoUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbangBakso-AbangBaksoUITests.debug.xcconfig"; path = "Target Support Files/Pods-AbangBakso-AbangBaksoUITests/Pods-AbangBakso-AbangBaksoUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		6791E5096A0AD1D920434140 /* Pods-AbangBaksoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AbangBaksoTests.debug.xcconfig"; path = "Target Support Files/Pods-AbangBaksoTests/Pods-AbangBaksoTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -175,6 +185,7 @@
 				206E8B3A2CD4CD73004BD8BD /* Model */,
 				206E8B372CD4CCEF004BD8BD /* Service */,
 				206E8B362CD4CCDB004BD8BD /* Repository */,
+				20FBA6342CD9B4230048AD5C /* Domain */,
 				206E8AF52CD48D66004BD8BD /* AbangBaksoApp.swift */,
 				206E8AF72CD48D66004BD8BD /* ContentView.swift */,
 				206E8AF92CD48D66004BD8BD /* Item.swift */,
@@ -196,6 +207,9 @@
 		206E8B072CD48D68004BD8BD /* AbangBaksoTests */ = {
 			isa = PBXGroup;
 			children = (
+				20FBA6372CD9B8720048AD5C /* Domain */,
+				206E8B8C2CD8C99F004BD8BD /* Helper */,
+				206E8B892CD8C2D5004BD8BD /* Repository */,
 				206E8B082CD48D68004BD8BD /* AbangBaksoTests.swift */,
 				206E8B622CD8A77C004BD8BD /* Mock.generated.swift */,
 			);
@@ -255,6 +269,39 @@
 			path = Constant;
 			sourceTree = "<group>";
 		};
+		206E8B892CD8C2D5004BD8BD /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				206E8B8A2CD8C2E5004BD8BD /* UserRepositoryTest.swift */,
+			);
+			path = Repository;
+			sourceTree = "<group>";
+		};
+		206E8B8C2CD8C99F004BD8BD /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				206E8B8D2CD8C9B5004BD8BD /* DummyPublisherResult.swift */,
+				20FBA6322CD9B3770048AD5C /* DummyBuilder.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		20FBA6342CD9B4230048AD5C /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				20FBA6352CD9B42C0048AD5C /* CreateUser.swift */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		20FBA6372CD9B8720048AD5C /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				20FBA6382CD9B8CB0048AD5C /* CreateUserTest.swift */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
 		32DC9834140494CA7304AFB9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -299,9 +346,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 206E8B182CD48D68004BD8BD /* Build configuration list for PBXNativeTarget "AbangBakso" */;
 			buildPhases = (
+				206E8B882CD8BD95004BD8BD /* Generate Mocks */,
 				7DC587B9E3E0F07BB105E0B4 /* [CP] Check Pods Manifest.lock */,
 				206E8B332CD4C661004BD8BD /* Firebase */,
-				206E8B882CD8BD95004BD8BD /* Generate Mocks */,
 				206E8AEE2CD48D66004BD8BD /* Sources */,
 				206E8AEF2CD48D66004BD8BD /* Frameworks */,
 				206E8AF02CD48D66004BD8BD /* Resources */,
@@ -596,6 +643,7 @@
 				206E8B392CD4CCF9004BD8BD /* FirestoreService.swift in Sources */,
 				206E8AFA2CD48D66004BD8BD /* Item.swift in Sources */,
 				206E8B512CD87F0E004BD8BD /* LoginError.swift in Sources */,
+				20FBA6362CD9B42C0048AD5C /* CreateUser.swift in Sources */,
 				206E8B4F2CD879C7004BD8BD /* KeychainKeys.swift in Sources */,
 				206E8B402CD4DD9C004BD8BD /* UserRepository.swift in Sources */,
 				206E8B4C2CD87978004BD8BD /* KeychainFacade.swift in Sources */,
@@ -610,8 +658,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20FBA6392CD9B8CB0048AD5C /* CreateUserTest.swift in Sources */,
+				20FBA6332CD9B3770048AD5C /* DummyBuilder.swift in Sources */,
 				206E8B632CD8A77C004BD8BD /* Mock.generated.swift in Sources */,
 				206E8B092CD48D68004BD8BD /* AbangBaksoTests.swift in Sources */,
+				206E8B8E2CD8C9B5004BD8BD /* DummyPublisherResult.swift in Sources */,
+				206E8B8B2CD8C2E5004BD8BD /* UserRepositoryTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -833,6 +885,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 25X49278XB;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				MARKETING_VERSION = 1.0;
@@ -854,6 +907,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 25X49278XB;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				MARKETING_VERSION = 1.0;

@@ -20,7 +20,7 @@ enum KeychainFacadeError: Error {
 }
 
 // MARK: Set
-protocol KeychainFacade {
+protocol KeychainFacade: AutoMockable {
     //set
     func set(data: Data, forKey key: String) throws
     func set(data: Bool, forKey key: String) throws

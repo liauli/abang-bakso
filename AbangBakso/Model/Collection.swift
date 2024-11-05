@@ -10,5 +10,5 @@ import Foundation
 // MARK: collection, also usertype
 enum Collection: String, Codable {
     case seller
-    case costumer
+    case customer
 }

@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseFirestore
 
-struct User: Codable {
+struct User: Codable, Equatable {
     let type: Collection
     
     // MARK: from Firestore
