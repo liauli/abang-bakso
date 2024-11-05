@@ -6,7 +6,10 @@ target 'AbangBakso' do
   use_frameworks!
 
   # Pods for AbangBakso
-
+  pod 'FirebaseFirestore'
+  pod 'FirebaseAnalytics'
+  pod 'FirebaseCrashlytics'
+  
   target 'AbangBaksoTests' do
     inherit! :search_paths
     # Pods for testing

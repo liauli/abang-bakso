@@ -11,4 +11,6 @@ unit.tests.mock:
   testable:
   - AbangBakso
   import:
+  - Combine
+  - FirebaseFirestore
   - Foundation

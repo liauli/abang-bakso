@@ -7,9 +7,15 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseCore
+import FirebaseFirestore
 
 @main
 struct AbangBaksoApp: App {
+    init() {
+        FirebaseApp.configure()
+    }
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -25,7 +31,13 @@ struct AbangBaksoApp: App {
 
     var body: some Scene {
         WindowGroup {
+            ZStack {
+                
+            }
             ContentView()
+            Button("Crash") {
+              fatalError("Crash was triggered")
+            }
         }
         .modelContainer(sharedModelContainer)
     }
