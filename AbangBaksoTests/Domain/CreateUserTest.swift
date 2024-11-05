@@ -75,7 +75,9 @@ class CreateUserTests: XCTestCase {
                     XCTAssertEqual(error, expectedError)
                     expectation.fulfill()
                 }
-            }, receiveValue: { })
+            }, receiveValue: { 
+                // no action
+            })
             .store(in: &cancellables)
         
         waitForExpectations(timeout: 1.0, handler: nil)
