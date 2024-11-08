@@ -31,12 +31,8 @@ struct AbangBaksoApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ZStack {
-                
-            }
-            ContentView()
-            Button("Crash") {
-              fatalError("Crash was triggered")
+            NavigationView {
+                ContentView()
             }
         }
         .modelContainer(sharedModelContainer)
