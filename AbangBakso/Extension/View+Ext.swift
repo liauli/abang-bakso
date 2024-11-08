@@ -13,6 +13,10 @@ extension View {
         self.font(.custom("TelkomselBatikSans-Regular", size: 24))
     }
     
+    func fontBatikTselH4Bold() -> some View {
+        self.font(.custom("TelkomselBatikSans-Bold", size: 24))
+    }
+    
     func fontBody2() -> some View {
         self.font(.custom("Poppins-Regular", size: 12))
     }

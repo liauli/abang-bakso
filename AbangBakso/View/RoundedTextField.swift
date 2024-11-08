@@ -24,6 +24,7 @@ struct RoundedTextField: View {
                 .frame(height: 48)
                 .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
                 .cornerRadius(8)
+                .tint(.gray)
                 .fontBody1()
         }.frame(height: height)
     }
