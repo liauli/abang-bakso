@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct LoginView: View {
+    let userTypes = Collection.allCases.map { $0.rawValue }
+    
     @State var name: String = ""
     @State var isChecked: Bool = false
+    @State private var selectedUserType: String? = nil
     
     var body: some View {
         VStack {
@@ -30,14 +33,15 @@ struct LoginView: View {
     private var loginHeader: some View {
         VStack {
             Image("login_img")
-            Text("Verifikasi").fontBatikTselH4()
+            Text("Verifikasi").fontBatikTselH4Bold()
+            Text("Masukkan nama dan role Anda di bawah ini:").fontBody2()
         }
     }
     
     private var loginForm: some View {
         VStack {
-            LoginField(text: $name, label: "Nama", hint: "Nama").padding(.top, 16)
-            LoginField(text: $name, label: "Role", hint: "Role")
+            LoginField(text: $name, label: String(localized: "Nama"), hint: String(localized: "Masukkan Nama")).padding(.top, 16)
+            LoginRoleSelection(menus: userTypes, selectedMenu: $selectedUserType)
             
             Button {
                 
