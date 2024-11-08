@@ -7,9 +7,17 @@ targets:
     type: application
     platform: iOS
     deploymentTarget: "17.2"
-    sources: [AbangBakso]
+    sources: 
+      - AbangBakso
+      - ./Fonts
+    settings: 
+      ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS: YES
+      ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
     info:
       path: Info.plist
+      properties:
+        UILaunchScreen: []
+        UIAppFonts: [TelkomselBatikSans-Regular.ttf, Poppins-Regular.ttf, TelkomselBatikSans-Bold.ttf]
     preBuildScripts:
       - script: |
                 ./Pods/SwiftyMocky/bin/swiftymocky generate
@@ -17,7 +25,8 @@ targets:
         name: Generate Mocks
         outputFiles:
           - $(SRCROOT)/SampleTests/Mock.generated.swift
-      - script: ${PODS_ROOT}/FirebaseCrashlytics/run
+    postBuildScripts:
+      - script: "${PODS_ROOT}/FirebaseCrashlytics/run"
         name: Firebase
   AbangBaksoTests:
     type: bundle.unit-test
