@@ -24,10 +24,5 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Install CocoaPods
-        run: |
-          gem install cocoapods
-          pod install
-
       - name: Run Fastlane tests
         run: bundle exec fastlane unit_tests
