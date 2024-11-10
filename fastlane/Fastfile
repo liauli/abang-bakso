@@ -22,8 +22,7 @@ platform :ios do
     run_tests(
       workspace: "AbangBakso.xcworkspace",
       scheme: "AbangBakso",
-      clean: true,
-      verbose: true
+      only_testing: ['AbangBaksoTests']
    )
   end
 end
