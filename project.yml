@@ -8,6 +8,9 @@ targets:
     platform: iOS
     deploymentTarget: "17.2"
     sources: [AbangBakso]
+    scheme:
+      testTargets:
+        - AbangBaksoTests
     info:
       path: Info.plist
     preBuildScripts:
@@ -17,16 +20,28 @@ targets:
         name: Generate Mocks
         outputFiles:
           - $(SRCROOT)/SampleTests/Mock.generated.swift
-      - script: ${PODS_ROOT}/FirebaseCrashlytics/run
+    postBuildScripts:
+      - script: "\"${PODS_ROOT}/FirebaseCrashlytics/run\""
         name: Firebase
   AbangBaksoTests:
     type: bundle.unit-test
+    info:
+      path: Info.plist
     platform: iOS
+    scheme:
+      testTargets:
+        - AbangBaksoTests
     deploymentTarget: "17.2"
     sources: [AbangBaksoTests]
+    dependencies:
+      - target: AbangBakso
   AbangBaksoUITests:
     type: bundle.ui-testing
     platform: iOS
     deploymentTarget: "17.2"
     sources: [AbangBaksoUITests]
+    info:
+      path: Info.plist
+    dependencies:
+      - target: AbangBakso
     
