@@ -30,4 +30,4 @@ jobs:
           pod install
 
       - name: Run Fastlane tests
-        run: bundle exec fastlane run_tests
+        run: bundle exec fastlane unit_tests
