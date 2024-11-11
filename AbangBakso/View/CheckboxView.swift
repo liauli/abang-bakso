@@ -1,0 +1,31 @@
+//
+//  CheckboxView.swift
+//  AbangBakso
+//
+//  Created by aulia_nastiti on 05/11/24.
+//
+
+import Foundation
+import SwiftUI
+
+struct CheckboxView: View {
+    @Binding var isChecked: Bool
+    var label: String
+    
+    var body: some View {
+        Button(action: {
+            isChecked.toggle()
+        }) {
+            HStack {
+                Image(systemName: isChecked ? "checkmark.square.fill" : "square")
+                    .foregroundColor(isChecked ? .blue : .gray)
+                    .font(.system(size: 20))
+                
+                Text(label)
+                    .foregroundColor(.primaryBlack)
+                    .fontLabel()
+            }
+        }
+        .buttonStyle(PlainButtonStyle()) // Remove default button styling
+    }
+}
