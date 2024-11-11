@@ -10,9 +10,7 @@ import SwiftUI
 struct LoginView: View {
     let userTypes = Collection.allCases.map { $0.rawValue }
     
-    @State var name: String = ""
-    @State var isChecked: Bool = false
-    @State private var selectedUserType: String? = nil
+    @StateObject var loginVM = ViewModelProvider.shared.createLoginViewModel()
     
     var body: some View {
         VStack {
@@ -28,6 +26,9 @@ struct LoginView: View {
         .ignoresSafeArea()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.tselGrayBg)
+        .onAppear {
+            loginVM.getCurrentLocation()
+        }
     }
     
     private var loginHeader: some View {
@@ -40,11 +41,11 @@ struct LoginView: View {
     
     private var loginForm: some View {
         VStack {
-            LoginField(text: $name, label: String(localized: "Nama"), hint: String(localized: "Masukkan Nama")).padding(.top, 16)
-            LoginRoleSelection(menus: userTypes, selectedMenu: $selectedUserType)
+            LoginField(text: $loginVM.name, label: String(localized: "Nama"), hint: String(localized: "Masukkan Nama")).padding(.top, 16)
+            LoginRoleSelection(menus: userTypes, selectedMenu: $loginVM.role)
             
             Button {
-                
+                loginVM.doCreateUser()
             } label: {
                 Text("Join")
                     .fontBody1()
@@ -53,9 +54,10 @@ struct LoginView: View {
             .cornerRadius(20)
             .buttonStyle(.borderedProminent)
             .tint(.tselRed)
+            .disabled(!loginVM.isTermChecked)
             
             CheckboxView(
-                isChecked: $isChecked,
+                isChecked: $loginVM.isTermChecked,
                 label: String(localized: "login_checkbox_text"))
                 .padding(.vertical, 16)
         }
