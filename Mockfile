@@ -12,5 +12,6 @@ unit.tests.mock:
   - AbangBakso
   import:
   - Combine
+  - CoreLocation
   - FirebaseFirestore
   - Foundation

@@ -7,7 +7,17 @@ targets:
     type: application
     platform: iOS
     deploymentTarget: "17.2"
+    info:
+      path: AbangBakso/Info.plist
+      properties:
+        NSLocationWhenInUseUsageDescription: Your app needs location permission to access the app
+        UILaunchScreen: []
+        UIAppFonts:
+          - TelkomselBatikSans-Regular.ttf
+          - Poppins-Regular.ttf
+          - TelkomselBatikSans-Bold.ttf
     scheme:
+      gatherCoverageData: true
       testTargets:
         - AbangBaksoTests
     sources: 
@@ -16,18 +26,13 @@ targets:
     settings: 
       ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS: YES
       ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
-    info:
-      path: Info.plist
-      properties:
-        UILaunchScreen: []
-        UIAppFonts: [TelkomselBatikSans-Regular.ttf, Poppins-Regular.ttf, TelkomselBatikSans-Bold.ttf]
     preBuildScripts:
       - script: |
                 ./Pods/SwiftyMocky/bin/swiftymocky generate
                 ./Pods/SwiftyMocky/bin/swiftymocky autoimport
         name: Generate Mocks
         outputFiles:
-          - $(SRCROOT)/SampleTests/Mock.generated.swift
+          - $(SRCROOT)/AbangBaksoTests/Mock.generated.swift
     postBuildScripts:
       - script: "\"${PODS_ROOT}/FirebaseCrashlytics/run\""
         name: Firebase
