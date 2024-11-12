@@ -11,10 +11,10 @@ import Foundation
 @testable import AbangBakso
 
 enum DummyBuilder {
-    static func createUser(type: Collection) -> User {
+    static func createUser(type: Collection, name: String = "Nama") -> User {
         return User(
             type: type,
-            name: "Nama",
+            name: name,
             location: GeoPoint(latitude: 0.0, longitude: 0.0),
             lastActive: Timestamp(),
             isActive: false

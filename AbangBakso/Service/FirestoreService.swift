@@ -11,7 +11,7 @@ import FirebaseFirestore
 protocol FirestoreService: AutoMockable {
     func create(id: String, _ data: [String: Any]) -> AnyPublisher<Void, FirestoreError>
     func update(id: String, _ data: [String: Any]) -> AnyPublisher<Void, FirestoreError>
-    func startObserving() -> AnyPublisher<[DocumentSnapshot], Never>
+    func startObserving() -> AnyPublisher<[DocumentSnapshotWrapper], Never>
     func stopObserving()
 }
 
@@ -31,12 +31,16 @@ class FirestoreServiceImpl: FirestoreService {
         return query.setDataPublisher(for: id, data: data)
     }
     
-    func startObserving() -> AnyPublisher<[DocumentSnapshot], Never> {
+    func startObserving() -> AnyPublisher<[DocumentSnapshotWrapper], Never> {
         return query.snapshotPublisher { [weak self] listener in
             self?.listener = listener
         }
         .map { querySnapshot in
             return querySnapshot.documents
+                .filter{ $0.data().isEmpty == false }
+                .map { doc in
+                    return DocumentSnapshotWrapper(data: doc.data(), isExists: doc.exists)
+                }
         }
         .replaceError(with: []).eraseToAnyPublisher()
     }

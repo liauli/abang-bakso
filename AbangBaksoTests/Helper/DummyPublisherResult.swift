@@ -15,6 +15,10 @@ func success<T>(_ data: T) -> AnyPublisher<T, FirestoreError> {
   return Just(data).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
 }
 
+func alwaysSuccess<T>(_ data: T) -> AnyPublisher<T, Never> {
+  return Just(data).eraseToAnyPublisher()
+}
+
 func failed<T>(_ error: FirestoreError) -> AnyPublisher<T, FirestoreError> {
   return Fail(error: error).eraseToAnyPublisher()
 }
