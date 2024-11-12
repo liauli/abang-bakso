@@ -9,9 +9,16 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-
+    @StateObject var loginVM = ViewModelProvider.shared.createLoginViewModel()
+    
     var body: some View {
-        LoginView()
+        if loginVM.isLoggedIn {
+            if let user = loginVM.user {
+                MapView(user: user)
+            }
+        } else {
+            LoginView(loginVM: loginVM)
+        }
     }
 }
 

@@ -21,6 +21,13 @@ class ViewModelProvider {
             domain.createGetLocationUpdates()
         )
     }
+    
+    func createMapViewModel() -> MapViewModel {
+        return MapViewModel(
+            domain.createObserveUser(type: .customer),
+            RepositoryProvider.shared.createUserRepository(type: .seller)
+        )
+    }
 }
 
 class DomainProvider {
@@ -36,6 +43,10 @@ class DomainProvider {
     
     func createCreateUser(type: Collection) -> CreateUser {
         return CreateUserImpl(repositoryProvider.createUserRepository(type: type))
+    }
+    
+    func createObserveUser(type: Collection) -> ObserveUser {
+        return ObserveUserImpl(repositoryProvider.createUserRepository(type: type))
     }
 }
 
