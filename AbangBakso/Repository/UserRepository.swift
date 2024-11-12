@@ -11,6 +11,8 @@ import FirebaseFirestore
 
 protocol UserRepository: AutoMockable {
     func create(user: User) -> AnyPublisher<Void, FirestoreError>
+    func startObserveUser() -> AnyPublisher<[User], Never>
+    func stopObserving()
 }
 
 class UserRepositoryImpl: UserRepository {
@@ -44,5 +46,19 @@ class UserRepositoryImpl: UserRepository {
         } catch {
             return Fail(error: FirestoreError.failedToSaveUser).eraseToAnyPublisher()
         }
+    }
+    
+    func stopObserving() {
+        return service.stopObserving()
+    }
+    
+    func startObserveUser() -> AnyPublisher<[User], Never>{
+        return service.startObserving()
+            .map { documents -> [User] in
+                return documents.map { document in
+                    User(type: .customer, document.data)
+                }
+            }
+            .eraseToAnyPublisher()
     }
 }

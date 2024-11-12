@@ -17,7 +17,6 @@ class UserRepositoryTest: XCTestCase {
     private var sut: UserRepository!
     
     private var mockService = FirestoreServiceMock()
-    private var mockCustomerService = FirestoreServiceMock()
     private var mockKeychain = KeychainFacadeMock()
     
     private var cancellables: Set<AnyCancellable> = []
@@ -109,5 +108,32 @@ class UserRepositoryTest: XCTestCase {
           }.store(in: &cancellables)
 
           wait(for: [expectation], timeout: 1)
+    }
+    
+    
+    func test_startObserveUser_should_return_users() {
+        let dummyUser = DummyBuilder.createUser(type: .customer)
+        
+        let dummyDocuments = [
+            DocumentSnapshotWrapper(data: dummyUser.dictionary, isExists: false)
+        ]
+        Given(mockService,
+            .startObserving(willReturn: alwaysSuccess(dummyDocuments))
+        )
+        
+        let expectation = XCTestExpectation(description: "success")
+        
+        sut.startObserveUser().sink { _ in
+            expectation.fulfill()
+          } receiveValue: { response in
+              Verify(self.mockService, .once, .startObserving())
+              XCTAssertEqual(response.first, dummyUser)
+          }.store(in: &cancellables)
+        wait(for: [expectation], timeout: 1)
+    }
+    
+    func test_stopObserving() {
+        sut.stopObserving()
+        Verify(mockService, .once, .stopObserving())
     }
 }

@@ -9,9 +9,9 @@
 import SwiftyMocky
 import XCTest
 import Combine
+import CoreLocation
 import FirebaseFirestore
 import Foundation
-import CoreLocation
 @testable import AbangBakso
 
 
@@ -279,11 +279,11 @@ open class FirestoreServiceMock: FirestoreService, Mock {
 		return __value
     }
 
-    open func startObserving() -> AnyPublisher<[DocumentSnapshot], Never> {
+    open func startObserving() -> AnyPublisher<[DocumentSnapshotWrapper], Never> {
         addInvocation(.m_startObserving)
 		let perform = methodPerformValue(.m_startObserving) as? () -> Void
 		perform?()
-		var __value: AnyPublisher<[DocumentSnapshot], Never>
+		var __value: AnyPublisher<[DocumentSnapshotWrapper], Never>
 		do {
 		    __value = try methodReturnValue(.m_startObserving).casted()
 		} catch {
@@ -360,7 +360,7 @@ open class FirestoreServiceMock: FirestoreService, Mock {
         public static func update(id: Parameter<String>, _ data: Parameter<[String: Any]>, willReturn: AnyPublisher<Void, FirestoreError>...) -> MethodStub {
             return Given(method: .m_update__id_id_data(`id`, `data`), products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
-        public static func startObserving(willReturn: AnyPublisher<[DocumentSnapshot], Never>...) -> MethodStub {
+        public static func startObserving(willReturn: AnyPublisher<[DocumentSnapshotWrapper], Never>...) -> MethodStub {
             return Given(method: .m_startObserving, products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
         public static func create(id: Parameter<String>, _ data: Parameter<[String: Any]>, willProduce: (Stubber<AnyPublisher<Void, FirestoreError>>) -> Void) -> MethodStub {
@@ -377,10 +377,10 @@ open class FirestoreServiceMock: FirestoreService, Mock {
 			willProduce(stubber)
 			return given
         }
-        public static func startObserving(willProduce: (Stubber<AnyPublisher<[DocumentSnapshot], Never>>) -> Void) -> MethodStub {
-            let willReturn: [AnyPublisher<[DocumentSnapshot], Never>] = []
+        public static func startObserving(willProduce: (Stubber<AnyPublisher<[DocumentSnapshotWrapper], Never>>) -> Void) -> MethodStub {
+            let willReturn: [AnyPublisher<[DocumentSnapshotWrapper], Never>] = []
 			let given: Given = { return Given(method: .m_startObserving, products: willReturn.map({ StubProduct.return($0 as Any) })) }()
-			let stubber = given.stub(for: (AnyPublisher<[DocumentSnapshot], Never>).self)
+			let stubber = given.stub(for: (AnyPublisher<[DocumentSnapshotWrapper], Never>).self)
 			willProduce(stubber)
 			return given
         }
@@ -1189,9 +1189,46 @@ open class UserRepositoryMock: UserRepository, Mock {
 		return __value
     }
 
+    open func startObserveUser() -> AnyPublisher<[User], Never> {
+        addInvocation(.m_startObserveUser)
+		let perform = methodPerformValue(.m_startObserveUser) as? () -> Void
+		perform?()
+		var __value: AnyPublisher<[User], Never>
+		do {
+		    __value = try methodReturnValue(.m_startObserveUser).casted()
+		} catch {
+			onFatalFailure("Stub return value not specified for startObserveUser(). Use given")
+			Failure("Stub return value not specified for startObserveUser(). Use given")
+		}
+		return __value
+    }
+
+    open func stopObserving() {
+        addInvocation(.m_stopObserving)
+		let perform = methodPerformValue(.m_stopObserving) as? () -> Void
+		perform?()
+    }
+
+    open func update(user: User) -> AnyPublisher<Void, FirestoreError> {
+        addInvocation(.m_update__user_user(Parameter<User>.value(`user`)))
+		let perform = methodPerformValue(.m_update__user_user(Parameter<User>.value(`user`))) as? (User) -> Void
+		perform?(`user`)
+		var __value: AnyPublisher<Void, FirestoreError>
+		do {
+		    __value = try methodReturnValue(.m_update__user_user(Parameter<User>.value(`user`))).casted()
+		} catch {
+			onFatalFailure("Stub return value not specified for update(user: User). Use given")
+			Failure("Stub return value not specified for update(user: User). Use given")
+		}
+		return __value
+    }
+
 
     fileprivate enum MethodType {
         case m_create__user_user(Parameter<User>)
+        case m_startObserveUser
+        case m_stopObserving
+        case m_update__user_user(Parameter<User>)
 
         static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
             switch (lhs, rhs) {
@@ -1199,17 +1236,33 @@ open class UserRepositoryMock: UserRepository, Mock {
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsUser, rhs: rhsUser, with: matcher), lhsUser, rhsUser, "user"))
 				return Matcher.ComparisonResult(results)
+
+            case (.m_startObserveUser, .m_startObserveUser): return .match
+
+            case (.m_stopObserving, .m_stopObserving): return .match
+
+            case (.m_update__user_user(let lhsUser), .m_update__user_user(let rhsUser)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsUser, rhs: rhsUser, with: matcher), lhsUser, rhsUser, "user"))
+				return Matcher.ComparisonResult(results)
+            default: return .none
             }
         }
 
         func intValue() -> Int {
             switch self {
             case let .m_create__user_user(p0): return p0.intValue
+            case .m_startObserveUser: return 0
+            case .m_stopObserving: return 0
+            case let .m_update__user_user(p0): return p0.intValue
             }
         }
         func assertionName() -> String {
             switch self {
             case .m_create__user_user: return ".create(user:)"
+            case .m_startObserveUser: return ".startObserveUser()"
+            case .m_stopObserving: return ".stopObserving()"
+            case .m_update__user_user: return ".update(user:)"
             }
         }
     }
@@ -1226,9 +1279,29 @@ open class UserRepositoryMock: UserRepository, Mock {
         public static func create(user: Parameter<User>, willReturn: AnyPublisher<Void, FirestoreError>...) -> MethodStub {
             return Given(method: .m_create__user_user(`user`), products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
+        public static func startObserveUser(willReturn: AnyPublisher<[User], Never>...) -> MethodStub {
+            return Given(method: .m_startObserveUser, products: willReturn.map({ StubProduct.return($0 as Any) }))
+        }
+        public static func update(user: Parameter<User>, willReturn: AnyPublisher<Void, FirestoreError>...) -> MethodStub {
+            return Given(method: .m_update__user_user(`user`), products: willReturn.map({ StubProduct.return($0 as Any) }))
+        }
         public static func create(user: Parameter<User>, willProduce: (Stubber<AnyPublisher<Void, FirestoreError>>) -> Void) -> MethodStub {
             let willReturn: [AnyPublisher<Void, FirestoreError>] = []
 			let given: Given = { return Given(method: .m_create__user_user(`user`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
+			let stubber = given.stub(for: (AnyPublisher<Void, FirestoreError>).self)
+			willProduce(stubber)
+			return given
+        }
+        public static func startObserveUser(willProduce: (Stubber<AnyPublisher<[User], Never>>) -> Void) -> MethodStub {
+            let willReturn: [AnyPublisher<[User], Never>] = []
+			let given: Given = { return Given(method: .m_startObserveUser, products: willReturn.map({ StubProduct.return($0 as Any) })) }()
+			let stubber = given.stub(for: (AnyPublisher<[User], Never>).self)
+			willProduce(stubber)
+			return given
+        }
+        public static func update(user: Parameter<User>, willProduce: (Stubber<AnyPublisher<Void, FirestoreError>>) -> Void) -> MethodStub {
+            let willReturn: [AnyPublisher<Void, FirestoreError>] = []
+			let given: Given = { return Given(method: .m_update__user_user(`user`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
 			let stubber = given.stub(for: (AnyPublisher<Void, FirestoreError>).self)
 			willProduce(stubber)
 			return given
@@ -1239,6 +1312,9 @@ open class UserRepositoryMock: UserRepository, Mock {
         fileprivate var method: MethodType
 
         public static func create(user: Parameter<User>) -> Verify { return Verify(method: .m_create__user_user(`user`))}
+        public static func startObserveUser() -> Verify { return Verify(method: .m_startObserveUser)}
+        public static func stopObserving() -> Verify { return Verify(method: .m_stopObserving)}
+        public static func update(user: Parameter<User>) -> Verify { return Verify(method: .m_update__user_user(`user`))}
     }
 
     public struct Perform {
@@ -1247,6 +1323,15 @@ open class UserRepositoryMock: UserRepository, Mock {
 
         public static func create(user: Parameter<User>, perform: @escaping (User) -> Void) -> Perform {
             return Perform(method: .m_create__user_user(`user`), performs: perform)
+        }
+        public static func startObserveUser(perform: @escaping () -> Void) -> Perform {
+            return Perform(method: .m_startObserveUser, performs: perform)
+        }
+        public static func stopObserving(perform: @escaping () -> Void) -> Perform {
+            return Perform(method: .m_stopObserving, performs: perform)
+        }
+        public static func update(user: Parameter<User>, perform: @escaping (User) -> Void) -> Perform {
+            return Perform(method: .m_update__user_user(`user`), performs: perform)
         }
     }
 
