@@ -13,6 +13,7 @@ protocol UserRepository: AutoMockable {
     func create(user: User) -> AnyPublisher<Void, FirestoreError>
     func startObserveUser() -> AnyPublisher<[User], Never>
     func stopObserving()
+    func update(user: User) -> AnyPublisher<Void, FirestoreError>
 }
 
 class UserRepositoryImpl: UserRepository {
@@ -24,6 +25,10 @@ class UserRepositoryImpl: UserRepository {
     ) {
         self.service = service
         self.keychain = keychain
+    }
+    
+    func update(user: User) -> AnyPublisher<Void, FirestoreError> {
+        return service.update(id: user.name, user.dictionary)
     }
     
     func create(user: User) -> AnyPublisher<Void, FirestoreError> {

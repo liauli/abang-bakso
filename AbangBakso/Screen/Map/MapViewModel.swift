@@ -7,25 +7,34 @@
 
 import Foundation
 import Combine
+import CoreLocation
+import FirebaseFirestore
 
 class MapViewModel: ObservableObject {
-    var user: User? = nil
-    
-    // MARK: temp
-    private let sellerRepository: UserRepository
+    @Published var user: User? = nil
+
     
     private let observeCustomer: ObserveUser
+    private let updateSeller: UpdateUser
+    private let observeLocation: GetLocationUpdates
     
     var cancellabels = Set<AnyCancellable>()
     
     @Published private(set) var customers: [User] = []
     
+    deinit {
+        stopObserving()
+        setOnline(false)
+    }
+    
     init(
         _ observeCustomer: ObserveUser,
-        _ sellerRepository: UserRepository
+        _ updateSeller: UpdateUser,
+        _ observeLocation: GetLocationUpdates
     ) {
         self.observeCustomer = observeCustomer
-        self.sellerRepository = sellerRepository
+        self.observeLocation = observeLocation
+        self.updateSeller = updateSeller
     }
     
     func startObservingCustomers() {
@@ -36,18 +45,39 @@ class MapViewModel: ObservableObject {
         }.store(in: &cancellabels)
     }
     
-    func stopObservingCustomers(){
-        observeCustomer.stop()
+    func startObservingLocation() {
+        observeLocation.execute().sink { comp in
+            // comp
+        } receiveValue: { [unowned self] loc in
+            let newLoc = CLLocation(latitude: loc.latitude, longitude: loc.longitude)
+            let prevLoc = CLLocation(latitude: self.user?.location.latitude ?? 0, longitude: self.user?.location.longitude ?? 0)
+            let distance = newLoc.distance(from: prevLoc)
+            if distance >= 5 {
+                let geo = GeoPoint(latitude: loc.latitude, longitude: loc.longitude)
+                self.user?.location = geo
+                self.updateUser()
+            }
+            
+        }.store(in: &cancellabels)
     }
     
-    func setSellerOffline() {
-        user?.isActive = false
+    func stopObserving(){
+        observeCustomer.stop()
+        observeLocation.stop()
+    }
+    
+    func updateUser() {
         if let user = user {
-            sellerRepository.update(user: user).sink { comp in
+            updateSeller.execute(user: user).sink { comp in
                 // comp
             } receiveValue: { _ in
-                print("completed")
+                // no vlaue
             }.store(in: &cancellabels)
         }
+    }
+    
+    func setOnline(_ isOnline: Bool) {
+        user?.isActive = isOnline
+        updateUser()
     }
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Marker: View {
+struct CustomMarker: View {
     var type: Collection = .customer
     var name: String
     
@@ -36,5 +36,5 @@ struct Marker: View {
 }
 
 #Preview {
-    Marker(name: "Lia")
+    CustomMarker(name: "Lia")
 }

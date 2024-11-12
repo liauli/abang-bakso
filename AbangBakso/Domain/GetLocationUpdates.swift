@@ -11,6 +11,7 @@ import CoreLocation
 
 protocol GetLocationUpdates: AutoMockable {
     func execute() -> AnyPublisher<CLLocationCoordinate2D, Never>
+    func stop()
 }
 
 class GetLocationUpdatesImpl: GetLocationUpdates {
@@ -21,5 +22,9 @@ class GetLocationUpdatesImpl: GetLocationUpdates {
     }
     func execute() -> AnyPublisher<CLLocationCoordinate2D, Never> {
         return repository.getLocationUpdates()
+    }
+    
+    func stop() {
+        repository.stopUpdate()
     }
 }
