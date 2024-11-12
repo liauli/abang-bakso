@@ -15,6 +15,8 @@ class LoginViewModel: ObservableObject {
     @Published var role: Collection? = nil
     @Published var isTermChecked: Bool = false
     
+    @Published var user: User? = nil
+    
     @Published private(set) var isButtonEnabled: Bool = false
     @Published private(set) var isLoggedIn: Bool = false
     
@@ -53,13 +55,15 @@ class LoginViewModel: ObservableObject {
             if user.type == .customer {
                 domain = createCustomerUser
             }
-            
+            self.user = user
             domain.execute(user: user)
                 .subscribe(on: Scheduler.background)
                 .receive(on: RunLoop.main)
                 .sink(receiveCompletion: { comp in
-                    print(comp)
-                }, receiveValue: { _ in })
+                    // no op handle error
+                }, receiveValue: { [unowned self] _ in
+                    self.isLoggedIn = true
+                })
                 .store(in: &cancelables)
         }
     }

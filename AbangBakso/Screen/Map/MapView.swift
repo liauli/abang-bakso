@@ -17,6 +17,7 @@ struct LocationAnnotation: Identifiable {
 }
 
 struct MapView: View {
+    var user: User
     @State var position = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: -6.2088, longitude: 106.8456),
         span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004)
@@ -31,7 +32,19 @@ struct MapView: View {
             MapAnnotation(coordinate: annotation.coordinate) {
                 Marker(name: annotation.title)
             }
-        }.edgesIgnoringSafeArea(.all)
+        }
+        .edgesIgnoringSafeArea(.all)
+        .onAppear {
+            setInitialPosition()
+            
+        }
+    }
+    
+    private func setInitialPosition() {
+        position = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: user.location.latitude, longitude: user.location.longitude),
+            span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004)
+        )
     }
 }
 

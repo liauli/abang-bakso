@@ -10,7 +10,7 @@ import SwiftUI
 struct LoginView: View {
     let userTypes = Collection.allCases.map { $0.rawValue }
     
-    @StateObject var loginVM = ViewModelProvider.shared.createLoginViewModel()
+    @ObservedObject var loginVM: LoginViewModel
     
     var body: some View {
         VStack {
@@ -64,6 +64,6 @@ struct LoginView: View {
     }
 }
 
-#Preview {
-    LoginView()
-}
+//#Preview {
+    //LoginView()
+//}
