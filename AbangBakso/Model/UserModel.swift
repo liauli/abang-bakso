@@ -7,6 +7,7 @@
 
 import Foundation
 import FirebaseFirestore
+import CoreLocation
 
 struct User: Codable, Equatable, Identifiable {
     var id: String
@@ -18,6 +19,10 @@ struct User: Codable, Equatable, Identifiable {
     var location: GeoPoint
     var lastActive: Timestamp
     var isActive: Bool
+    
+    var coordinate: CLLocationCoordinate2D {
+        return CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+    }
     
     var dictionary: [String: Any] {
       return [

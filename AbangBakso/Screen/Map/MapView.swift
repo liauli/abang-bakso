@@ -18,25 +18,27 @@ struct LocationAnnotation: Identifiable {
 
 struct MapView: View {
     var user: User
+    @StateObject var mapVM = ViewModelProvider.shared.createMapViewModel()
+    
     @State var position = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: -6.2088, longitude: 106.8456),
+        center: CLLocationCoordinate2D(latitude: -6.222328, longitude: 106.812764),
         span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004)
     )
     
-    let annotations = [
-            LocationAnnotation(coordinate: CLLocationCoordinate2D(latitude: -6.2088, longitude: 106.8456), title: "Custom Marker")
-        ]
-    
     var body: some View {
-        Map(coordinateRegion: $position, annotationItems: annotations) { annotation in
-            MapAnnotation(coordinate: annotation.coordinate) {
-                Marker(name: annotation.title)
+        Map(coordinateRegion: $position, annotationItems: mapVM.customers) { cust in
+            MapAnnotation(coordinate: cust.coordinate) {
+                Marker(name: cust.name)
             }
         }
         .edgesIgnoringSafeArea(.all)
         .onAppear {
             setInitialPosition()
+            mapVM.startObservingCustomers()
+        }
+        .onDisappear {
             
+            mapVM.stopObservingCustomers()
         }
     }
     
@@ -49,5 +51,5 @@ struct MapView: View {
 }
 
 #Preview {
-    MapView()
+    MapView(user: User(type: .seller, [:]))
 }

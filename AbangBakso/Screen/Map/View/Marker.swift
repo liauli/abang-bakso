@@ -12,22 +12,25 @@ struct Marker: View {
     var name: String
     
     var body: some View {
-        ZStack(alignment: .center) {
-            Image("customer_icon")
+        ZStack {
+            Image(type == .customer ? "customer_icon" : "seller_icon")
                 .resizable()
                 .frame(width: 40, height: 40)
                 .foregroundColor(.red)
             
-            Text(name)
-                .foregroundColor(.black)
-                .padding(5)
-                .fontLabel()
-                .lineLimit(1)
-                .background(Color.white)
-                .cornerRadius(10)
-                .frame(minWidth: 0, maxWidth: .infinity)
-                .offset(x: 66, y: -3)
-
+            GeometryReader { geometry in
+                HStack {
+                    Text(name)
+                        .foregroundColor(.black)
+                        .padding(5)
+                        .fontLabel()
+                        .lineLimit(1)
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        //.frame(minWidth: 0, maxWidth: .infinity)
+                        .offset(x: geometry.size.width / 2 + 22, y: 5)
+                }
+            }
         }
     }
 }
