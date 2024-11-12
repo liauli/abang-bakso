@@ -8,6 +8,7 @@
 import Foundation
 import XCTest
 import Combine
+import SwiftyMocky
 @testable import AbangBakso
 
 class ObserveUserTests: XCTestCase {
@@ -35,7 +36,7 @@ class ObserveUserTests: XCTestCase {
             DummyBuilder.createUser(type: .seller, name: "Alice"),
         ]
         
-        userRepositoryMock.given(.startObserveUser(willReturn: Just(expectedUsers).eraseToAnyPublisher()))
+        Given(userRepositoryMock, .startObserveUser(willReturn: Just(expectedUsers).eraseToAnyPublisher()))
         
         var result: [User] = []
         let expectation = XCTestExpectation(description: "success")
@@ -45,6 +46,7 @@ class ObserveUserTests: XCTestCase {
                 expectation.fulfill()
             }, receiveValue: { users in
                 result = users
+                Verify(self.userRepositoryMock, .once, .startObserveUser())
                 XCTAssertNotNil(result)
                 XCTAssertEqual(result.count, 2)
                 XCTAssertEqual(result.first?.name, "John")
@@ -67,6 +69,8 @@ class ObserveUserTests: XCTestCase {
             .sink(receiveCompletion: { _ in
                 expectation.fulfill()
             }, receiveValue: { users in
+                Verify(self.userRepositoryMock, .once, .startObserveUser())
+                
                 result = users
                 XCTAssertNotNil(result)
                 XCTAssertEqual(result.count, 0)
@@ -74,5 +78,10 @@ class ObserveUserTests: XCTestCase {
             .store(in: &cancellables)
         
         wait(for: [expectation], timeout: 1)
+    }
+    
+    func test_stopObserving() {
+        sut.stop()
+        Verify(userRepositoryMock, .once, .stopObserving())
     }
 }

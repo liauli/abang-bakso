@@ -129,7 +129,11 @@ class UserRepositoryTest: XCTestCase {
               Verify(self.mockService, .once, .startObserving())
               XCTAssertEqual(response.first, dummyUser)
           }.store(in: &cancellables)
-          wait(for: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 1)
     }
     
+    func test_stopObserving() {
+        sut.stopObserving()
+        Verify(mockService, .once, .stopObserving())
+    }
 }

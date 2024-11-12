@@ -10,6 +10,7 @@ import Foundation
 
 protocol ObserveUser {
     func execute() -> AnyPublisher<[User], Never>
+    func stop()
 }
 
 class ObserveUserImpl: ObserveUser {
@@ -21,5 +22,9 @@ class ObserveUserImpl: ObserveUser {
     
     func execute() -> AnyPublisher<[User], Never> {
         return userRepository.startObserveUser()
+    }
+    
+    func stop() {
+        userRepository.stopObserving()
     }
 }
