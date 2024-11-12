@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-protocol ObserveUser {
+protocol ObserveUser: AutoMockable {
     func execute() -> AnyPublisher<[User], Never>
     func stop()
 }

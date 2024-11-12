@@ -9,8 +9,9 @@ import Foundation
 import CoreLocation
 import Combine
 
-protocol LocationRepository {
+protocol LocationRepository: AutoMockable {
     func getLocationUpdates() -> AnyPublisher<CLLocationCoordinate2D, Never>
+    func stopUpdate()
 }
 
 final class LocationRepositoryImpl: NSObject, LocationRepository, CLLocationManagerDelegate {
@@ -69,5 +70,9 @@ final class LocationRepositoryImpl: NSObject, LocationRepository, CLLocationMana
         manager.startUpdatingLocation()
         
         return locationPublisher
+    }
+    
+    func stopUpdate() {
+        manager.stopUpdatingLocation()
     }
 }

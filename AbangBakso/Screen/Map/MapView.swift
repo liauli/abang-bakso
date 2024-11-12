@@ -24,25 +24,40 @@ struct MapView: View {
         center: CLLocationCoordinate2D(latitude: -6.222328, longitude: 106.812764),
         span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004)
     )
+    @Environment(\.scenePhase) private var scenePhase
     
     var body: some View {
-        Map(coordinateRegion: $position, annotationItems: mapVM.customers) { cust in
+        Map(coordinateRegion: $position, showsUserLocation: true, annotationItems: mapVM.customers) { cust in
+            
             MapAnnotation(coordinate: cust.coordinate) {
-                Marker(name: cust.name)
+                CustomMarker(name: cust.name)
             }
         }
         .edgesIgnoringSafeArea(.all)
         .onAppear {
             setInitialPosition()
             mapVM.startObservingCustomers()
+            mapVM.startObservingLocation()
         }
         .onDisappear {
+            mapVM.stopObserving()
+            mapVM.setOnline(false)
             
-            mapVM.stopObservingCustomers()
+        }
+        .onChange(of: scenePhase) { newScenePhase in
+            switch newScenePhase {
+            case .active:
+               mapVM.setOnline(true)
+            case .background:
+                mapVM.setOnline(false)
+            default:
+                print("no action")
+            }
         }
     }
     
     private func setInitialPosition() {
+        mapVM.user = user
         position = MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: user.location.latitude, longitude: user.location.longitude),
             span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004)

@@ -32,7 +32,7 @@ class FirestoreServiceImpl: FirestoreService {
     }
     
     func startObserving() -> AnyPublisher<[DocumentSnapshotWrapper], Never> {
-        return query.snapshotPublisher { [weak self] listener in
+        return query.whereField("isActive", isEqualTo: true).snapshotPublisher { [weak self] listener in
             self?.listener = listener
         }
         .map { querySnapshot in
