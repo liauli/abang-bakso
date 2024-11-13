@@ -18,7 +18,7 @@ struct LocationAnnotation: Identifiable {
 
 struct MapView: View {
     var user: User
-    @StateObject var mapVM = ViewModelProvider.shared.createMapViewModel()
+    @StateObject var mapVM: MapViewModel
     
     @State var position = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: -6.222328, longitude: 106.812764),
@@ -66,5 +66,5 @@ struct MapView: View {
 }
 
 #Preview {
-    MapView(user: User(type: .seller, [:]))
+    MapView(user: User(type: .seller, [:]), mapVM: ViewModelProvider.shared.createMapViewModel(for: .customer))
 }

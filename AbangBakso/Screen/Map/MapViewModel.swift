@@ -14,9 +14,9 @@ class MapViewModel: ObservableObject {
     @Published var user: User? = nil
 
     
-    private let observeCustomer: ObserveUser
-    private let updateSeller: UpdateUser
-    private let observeLocation: GetLocationUpdates
+    private let observeUser: ObserveUser
+    private let updateUser: UpdateUser
+    private let observeLocation: GetLocationUpdates?
     
     var cancellabels = Set<AnyCancellable>()
     
@@ -28,17 +28,17 @@ class MapViewModel: ObservableObject {
     }
     
     init(
-        _ observeCustomer: ObserveUser,
-        _ updateSeller: UpdateUser,
-        _ observeLocation: GetLocationUpdates
+        _ observeUser: ObserveUser,
+        _ updateUser: UpdateUser,
+        _ observeLocation: GetLocationUpdates? = nil
     ) {
-        self.observeCustomer = observeCustomer
+        self.observeUser = observeUser
         self.observeLocation = observeLocation
-        self.updateSeller = updateSeller
+        self.updateUser = updateUser
     }
     
     func startObservingCustomers() {
-        observeCustomer.execute().sink { comp in
+        observeUser.execute().sink { comp in
             // comp
         } receiveValue: { users in
             self.customers = users
@@ -46,7 +46,10 @@ class MapViewModel: ObservableObject {
     }
     
     func startObservingLocation() {
-        observeLocation.execute().sink { comp in
+        if user?.type == .customer {
+            return
+        }
+        observeLocation?.execute().sink { comp in
             // comp
         } receiveValue: { [unowned self] loc in
             let newLoc = CLLocation(latitude: loc.latitude, longitude: loc.longitude)
@@ -55,20 +58,20 @@ class MapViewModel: ObservableObject {
             if distance >= 5 {
                 let geo = GeoPoint(latitude: loc.latitude, longitude: loc.longitude)
                 self.user?.location = geo
-                self.updateUser()
+                self.updateUserData()
             }
             
         }.store(in: &cancellabels)
     }
     
     func stopObserving(){
-        observeCustomer.stop()
-        observeLocation.stop()
+        observeUser.stop()
+        observeLocation?.stop()
     }
     
-    func updateUser() {
+    func updateUserData() {
         if let user = user {
-            updateSeller.execute(user: user).sink { comp in
+            updateUser.execute(user: user).sink { comp in
                 // comp
             } receiveValue: { _ in
                 // no vlaue
@@ -78,6 +81,6 @@ class MapViewModel: ObservableObject {
     
     func setOnline(_ isOnline: Bool) {
         user?.isActive = isOnline
-        updateUser()
+        updateUserData()
     }
 }
