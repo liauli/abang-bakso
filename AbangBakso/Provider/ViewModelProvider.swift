@@ -22,12 +22,28 @@ class ViewModelProvider {
         )
     }
     
-    func createMapViewModel() -> MapViewModel {
+    private func createMapViewModelForSeller() -> MapViewModel {
         return MapViewModel(
             domain.createObserveUser(type: .customer),
             domain.createUpdateUser(type: .seller),
             domain.createGetLocationUpdates()
         )
+    }
+    
+    private func createMapViewModelForCustomer() -> MapViewModel {
+        return MapViewModel(
+            domain.createObserveUser(type: .seller),
+            domain.createUpdateUser(type: .customer)
+        )
+    }
+    
+    func createMapViewModel(for type: Collection) -> MapViewModel {
+        switch type {
+        case .customer:
+            return createMapViewModelForCustomer()
+        case .seller:
+            return createMapViewModelForSeller()
+        }
     }
 }
 
