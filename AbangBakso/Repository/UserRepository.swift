@@ -15,6 +15,7 @@ protocol UserRepository: AutoMockable {
     func stopObserving()
     func update(user: User) -> AnyPublisher<Void, FirestoreError>
     func delete(user: User) -> AnyPublisher<Void, FirestoreError>
+    func getLocal() -> AnyPublisher<User?, FirestoreError>
 }
 
 class UserRepositoryImpl: UserRepository {
@@ -79,5 +80,21 @@ class UserRepositoryImpl: UserRepository {
     
     func delete(user: User) -> AnyPublisher<Void, FirestoreError> {
         return service.delete(id: user.id).flatMap(removeUser).eraseToAnyPublisher()
+    }
+    
+    func getLocal() -> AnyPublisher<User?, FirestoreError> {
+        return Future { [weak self] promise in
+            do {
+                if let userData = try self?.keychain.get(forKey: KeychainKeys.user.rawValue) {
+                    
+                    let user = try JSONDecoder().decode(User.self, from: userData)
+                    promise(.success(user))
+                } else {
+                    promise(.success(nil))
+                }
+            } catch {
+                promise(.failure(.generalError(error)))
+            }
+        }.eraseToAnyPublisher()
     }
 }

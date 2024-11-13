@@ -25,18 +25,25 @@ class LoginViewModel: ObservableObject {
     private let createCustomerUser: CreateUser
     private let createSellerUser: CreateUser
     private let getLocationUpdates: GetLocationUpdates
+    private let getCurrentUser: GetCurrentUser
     private var cancelables = Set<AnyCancellable>()
     
     init(_ createCustomerUser: CreateUser,
          _ createSellerUser: CreateUser,
-         _ getLocationUpdates: GetLocationUpdates) {
+         _ getLocationUpdates: GetLocationUpdates,
+         _ getCurrentUser: GetCurrentUser
+    ) {
         self.createCustomerUser = createCustomerUser
         self.createSellerUser = createSellerUser
         self.getLocationUpdates = getLocationUpdates
+        self.getCurrentUser = getCurrentUser
         
         observeChangesToUpdateButtonState()
     }
-    
+}
+
+// MARK: actions
+extension LoginViewModel {
     func getCurrentLocation() {
         getLocationUpdates.execute().sink { [unowned self] location in
             if location.latitude != self.location?.latitude ?? 0 ||
@@ -72,8 +79,24 @@ class LoginViewModel: ObservableObject {
         user = nil
         isLoggedIn = false
     }
+    
+    func checkCurrentUser() {
+        getCurrentUser.execute()
+            .subscribe(on: Scheduler.background)
+            .receive(on: RunLoop.main)
+            .sink(receiveCompletion: { comp in
+                // no op handle error
+            }, receiveValue: { [weak self] user in
+                if user != nil {
+                    self?.user = user
+                    self?.isLoggedIn = true
+                }
+            })
+            .store(in: &cancelables)
+    }
 }
 
+// MARK: private functions
 extension LoginViewModel {
     fileprivate func createUserPayload(for role: Collection) -> User {
         return User(

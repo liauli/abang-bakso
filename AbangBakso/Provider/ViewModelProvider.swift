@@ -18,7 +18,8 @@ class ViewModelProvider {
         return LoginViewModel(
             domain.createCreateUser(type: .customer),
             domain.createCreateUser(type: .seller), 
-            domain.createGetLocationUpdates()
+            domain.createGetLocationUpdates(),
+            domain.createGetCurrentUser(type: .customer)
         )
     }
     
@@ -74,6 +75,12 @@ class DomainProvider {
     
     func createDeleteUser(type: Collection) -> DeleteUser {
         return DeleteUserImpl(
+            repositoryProvider.createUserRepository(type: type)
+        )
+    }
+    
+    func createGetCurrentUser(type: Collection) -> GetCurrentUser {
+        return GetCurrentUserImpl(
             repositoryProvider.createUserRepository(type: type)
         )
     }

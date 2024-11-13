@@ -13,7 +13,7 @@ struct CustomMarker: View {
     
     var body: some View {
         ZStack {
-            Image(type == .customer ? "customer_icon" : "seller_icon")
+            Image(type == .customer ? "seller_icon" : "customer_icon")
                 .resizable()
                 .frame(width: 40, height: 40)
                 .foregroundColor(.red)

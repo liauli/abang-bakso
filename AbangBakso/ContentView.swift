@@ -19,6 +19,9 @@ struct ContentView: View {
             }
         } else {
             LoginView(loginVM: loginVM)
+                .onAppear {
+                    loginVM.checkCurrentUser()
+                }
         }
     }
 }
