@@ -78,6 +78,21 @@ extension CollectionReference {
             }
         }
     }
+    
+    func deleteDocument(withID documentID: String) -> AnyPublisher<Void, FirestoreError> {
+            let documentRef = self.document(documentID)
+            
+            return Future { promise in
+                documentRef.delete { error in
+                    if let error = error {
+                        promise(.failure(.failedToDeleteUser(error))) // If there's an error, send failure
+                    } else {
+                        promise(.success(())) // Success (Void)
+                    }
+                }
+            }
+            .eraseToAnyPublisher() // Type-erased publisher
+        }
 }
 
 extension Query {

@@ -14,6 +14,7 @@ protocol UserRepository: AutoMockable {
     func startObserveUser() -> AnyPublisher<[User], Never>
     func stopObserving()
     func update(user: User) -> AnyPublisher<Void, FirestoreError>
+    func delete(user: User) -> AnyPublisher<Void, FirestoreError>
 }
 
 class UserRepositoryImpl: UserRepository {
@@ -65,5 +66,9 @@ class UserRepositoryImpl: UserRepository {
                 }
             }
             .eraseToAnyPublisher()
+    }
+    
+    func delete(user: User) -> AnyPublisher<Void, FirestoreError> {
+        return service.delete(id: user.id)
     }
 }

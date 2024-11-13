@@ -13,6 +13,7 @@ protocol FirestoreService: AutoMockable {
     func update(id: String, _ data: [String: Any]) -> AnyPublisher<Void, FirestoreError>
     func startObserving() -> AnyPublisher<[DocumentSnapshotWrapper], Never>
     func stopObserving()
+    func delete(id: String) -> AnyPublisher<Void, FirestoreError>
 }
 
 class FirestoreServiceImpl: FirestoreService {
@@ -47,5 +48,9 @@ class FirestoreServiceImpl: FirestoreService {
     
     func stopObserving() {
         listener?.remove()
+    }
+    
+    func delete(id: String) -> AnyPublisher<Void, FirestoreError> {
+        return query.deleteDocument(withID: id)
     }
 }
