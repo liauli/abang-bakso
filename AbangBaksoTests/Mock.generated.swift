@@ -2083,6 +2083,20 @@ open class UserRepositoryMock: UserRepository, Mock {
 		return __value
     }
 
+    open func getLocal() -> AnyPublisher<User?, FirestoreError> {
+        addInvocation(.m_getLocal)
+		let perform = methodPerformValue(.m_getLocal) as? () -> Void
+		perform?()
+		var __value: AnyPublisher<User?, FirestoreError>
+		do {
+		    __value = try methodReturnValue(.m_getLocal).casted()
+		} catch {
+			onFatalFailure("Stub return value not specified for getLocal(). Use given")
+			Failure("Stub return value not specified for getLocal(). Use given")
+		}
+		return __value
+    }
+
 
     fileprivate enum MethodType {
         case m_create__user_user(Parameter<User>)
@@ -2090,6 +2104,7 @@ open class UserRepositoryMock: UserRepository, Mock {
         case m_stopObserving
         case m_update__user_user(Parameter<User>)
         case m_delete__user_user(Parameter<User>)
+        case m_getLocal
 
         static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
             switch (lhs, rhs) {
@@ -2111,6 +2126,8 @@ open class UserRepositoryMock: UserRepository, Mock {
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsUser, rhs: rhsUser, with: matcher), lhsUser, rhsUser, "user"))
 				return Matcher.ComparisonResult(results)
+
+            case (.m_getLocal, .m_getLocal): return .match
             default: return .none
             }
         }
@@ -2122,6 +2139,7 @@ open class UserRepositoryMock: UserRepository, Mock {
             case .m_stopObserving: return 0
             case let .m_update__user_user(p0): return p0.intValue
             case let .m_delete__user_user(p0): return p0.intValue
+            case .m_getLocal: return 0
             }
         }
         func assertionName() -> String {
@@ -2131,6 +2149,7 @@ open class UserRepositoryMock: UserRepository, Mock {
             case .m_stopObserving: return ".stopObserving()"
             case .m_update__user_user: return ".update(user:)"
             case .m_delete__user_user: return ".delete(user:)"
+            case .m_getLocal: return ".getLocal()"
             }
         }
     }
@@ -2155,6 +2174,9 @@ open class UserRepositoryMock: UserRepository, Mock {
         }
         public static func delete(user: Parameter<User>, willReturn: AnyPublisher<Void, FirestoreError>...) -> MethodStub {
             return Given(method: .m_delete__user_user(`user`), products: willReturn.map({ StubProduct.return($0 as Any) }))
+        }
+        public static func getLocal(willReturn: AnyPublisher<User?, FirestoreError>...) -> MethodStub {
+            return Given(method: .m_getLocal, products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
         public static func create(user: Parameter<User>, willProduce: (Stubber<AnyPublisher<Void, FirestoreError>>) -> Void) -> MethodStub {
             let willReturn: [AnyPublisher<Void, FirestoreError>] = []
@@ -2184,6 +2206,13 @@ open class UserRepositoryMock: UserRepository, Mock {
 			willProduce(stubber)
 			return given
         }
+        public static func getLocal(willProduce: (Stubber<AnyPublisher<User?, FirestoreError>>) -> Void) -> MethodStub {
+            let willReturn: [AnyPublisher<User?, FirestoreError>] = []
+			let given: Given = { return Given(method: .m_getLocal, products: willReturn.map({ StubProduct.return($0 as Any) })) }()
+			let stubber = given.stub(for: (AnyPublisher<User?, FirestoreError>).self)
+			willProduce(stubber)
+			return given
+        }
     }
 
     public struct Verify {
@@ -2194,6 +2223,7 @@ open class UserRepositoryMock: UserRepository, Mock {
         public static func stopObserving() -> Verify { return Verify(method: .m_stopObserving)}
         public static func update(user: Parameter<User>) -> Verify { return Verify(method: .m_update__user_user(`user`))}
         public static func delete(user: Parameter<User>) -> Verify { return Verify(method: .m_delete__user_user(`user`))}
+        public static func getLocal() -> Verify { return Verify(method: .m_getLocal)}
     }
 
     public struct Perform {
@@ -2214,6 +2244,9 @@ open class UserRepositoryMock: UserRepository, Mock {
         }
         public static func delete(user: Parameter<User>, perform: @escaping (User) -> Void) -> Perform {
             return Perform(method: .m_delete__user_user(`user`), performs: perform)
+        }
+        public static func getLocal(perform: @escaping () -> Void) -> Perform {
+            return Perform(method: .m_getLocal, performs: perform)
         }
     }
 
