@@ -28,4 +28,8 @@ extension View {
     func fontLabel() -> some View {
         self.font(.custom("Poppins-Regular", size: 10))
     }
+    
+    func fontPoppins13() -> some View {
+        self.font(.custom("Poppins-Regular", size: 13))
+    }
 }
