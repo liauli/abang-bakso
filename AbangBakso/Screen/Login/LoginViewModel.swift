@@ -61,11 +61,16 @@ class LoginViewModel: ObservableObject {
                 .receive(on: RunLoop.main)
                 .sink(receiveCompletion: { comp in
                     // no op handle error
-                }, receiveValue: { [unowned self] _ in
-                    self.isLoggedIn = true
+                }, receiveValue: { [weak self] _ in
+                    self?.isLoggedIn = true
                 })
                 .store(in: &cancelables)
         }
+    }
+    
+    func destroySession() {
+        user = nil
+        isLoggedIn = false
     }
 }
 

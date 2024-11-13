@@ -207,6 +207,198 @@ open class CreateUserMock: CreateUser, Mock {
     }
 }
 
+// MARK: - DeleteUser
+
+open class DeleteUserMock: DeleteUser, Mock {
+    public init(sequencing sequencingPolicy: SequencingPolicy = .lastWrittenResolvedFirst, stubbing stubbingPolicy: StubbingPolicy = .wrap, file: StaticString = #file, line: UInt = #line) {
+        SwiftyMockyTestObserver.setup()
+        self.sequencingPolicy = sequencingPolicy
+        self.stubbingPolicy = stubbingPolicy
+        self.file = file
+        self.line = line
+    }
+
+    var matcher: Matcher = Matcher.default
+    var stubbingPolicy: StubbingPolicy = .wrap
+    var sequencingPolicy: SequencingPolicy = .lastWrittenResolvedFirst
+
+    private var queue = DispatchQueue(label: "com.swiftymocky.invocations", qos: .userInteractive)
+    private var invocations: [MethodType] = []
+    private var methodReturnValues: [Given] = []
+    private var methodPerformValues: [Perform] = []
+    private var file: StaticString?
+    private var line: UInt?
+
+    public typealias PropertyStub = Given
+    public typealias MethodStub = Given
+    public typealias SubscriptStub = Given
+
+    /// Convenience method - call setupMock() to extend debug information when failure occurs
+    public func setupMock(file: StaticString = #file, line: UInt = #line) {
+        self.file = file
+        self.line = line
+    }
+
+    /// Clear mock internals. You can specify what to reset (invocations aka verify, givens or performs) or leave it empty to clear all mock internals
+    public func resetMock(_ scopes: MockScope...) {
+        let scopes: [MockScope] = scopes.isEmpty ? [.invocation, .given, .perform] : scopes
+        if scopes.contains(.invocation) { invocations = [] }
+        if scopes.contains(.given) { methodReturnValues = [] }
+        if scopes.contains(.perform) { methodPerformValues = [] }
+    }
+
+
+
+
+
+    open func execute(user: User) -> AnyPublisher<Void, FirestoreError> {
+        addInvocation(.m_execute__user_user(Parameter<User>.value(`user`)))
+		let perform = methodPerformValue(.m_execute__user_user(Parameter<User>.value(`user`))) as? (User) -> Void
+		perform?(`user`)
+		var __value: AnyPublisher<Void, FirestoreError>
+		do {
+		    __value = try methodReturnValue(.m_execute__user_user(Parameter<User>.value(`user`))).casted()
+		} catch {
+			onFatalFailure("Stub return value not specified for execute(user: User). Use given")
+			Failure("Stub return value not specified for execute(user: User). Use given")
+		}
+		return __value
+    }
+
+
+    fileprivate enum MethodType {
+        case m_execute__user_user(Parameter<User>)
+
+        static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
+            switch (lhs, rhs) {
+            case (.m_execute__user_user(let lhsUser), .m_execute__user_user(let rhsUser)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsUser, rhs: rhsUser, with: matcher), lhsUser, rhsUser, "user"))
+				return Matcher.ComparisonResult(results)
+            }
+        }
+
+        func intValue() -> Int {
+            switch self {
+            case let .m_execute__user_user(p0): return p0.intValue
+            }
+        }
+        func assertionName() -> String {
+            switch self {
+            case .m_execute__user_user: return ".execute(user:)"
+            }
+        }
+    }
+
+    open class Given: StubbedMethod {
+        fileprivate var method: MethodType
+
+        private init(method: MethodType, products: [StubProduct]) {
+            self.method = method
+            super.init(products)
+        }
+
+
+        public static func execute(user: Parameter<User>, willReturn: AnyPublisher<Void, FirestoreError>...) -> MethodStub {
+            return Given(method: .m_execute__user_user(`user`), products: willReturn.map({ StubProduct.return($0 as Any) }))
+        }
+        public static func execute(user: Parameter<User>, willProduce: (Stubber<AnyPublisher<Void, FirestoreError>>) -> Void) -> MethodStub {
+            let willReturn: [AnyPublisher<Void, FirestoreError>] = []
+			let given: Given = { return Given(method: .m_execute__user_user(`user`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
+			let stubber = given.stub(for: (AnyPublisher<Void, FirestoreError>).self)
+			willProduce(stubber)
+			return given
+        }
+    }
+
+    public struct Verify {
+        fileprivate var method: MethodType
+
+        public static func execute(user: Parameter<User>) -> Verify { return Verify(method: .m_execute__user_user(`user`))}
+    }
+
+    public struct Perform {
+        fileprivate var method: MethodType
+        var performs: Any
+
+        public static func execute(user: Parameter<User>, perform: @escaping (User) -> Void) -> Perform {
+            return Perform(method: .m_execute__user_user(`user`), performs: perform)
+        }
+    }
+
+    public func given(_ method: Given) {
+        methodReturnValues.append(method)
+    }
+
+    public func perform(_ method: Perform) {
+        methodPerformValues.append(method)
+        methodPerformValues.sort { $0.method.intValue() < $1.method.intValue() }
+    }
+
+    public func verify(_ method: Verify, count: Count = Count.moreOrEqual(to: 1), file: StaticString = #file, line: UInt = #line) {
+        let fullMatches = matchingCalls(method, file: file, line: line)
+        let success = count.matches(fullMatches)
+        let assertionName = method.method.assertionName()
+        let feedback: String = {
+            guard !success else { return "" }
+            return Utils.closestCallsMessage(
+                for: self.invocations.map { invocation in
+                    matcher.set(file: file, line: line)
+                    defer { matcher.clearFileAndLine() }
+                    return MethodType.compareParameters(lhs: invocation, rhs: method.method, matcher: matcher)
+                },
+                name: assertionName
+            )
+        }()
+        MockyAssert(success, "Expected: \(count) invocations of `\(assertionName)`, but was: \(fullMatches).\(feedback)", file: file, line: line)
+    }
+
+    private func addInvocation(_ call: MethodType) {
+        self.queue.sync { invocations.append(call) }
+    }
+    private func methodReturnValue(_ method: MethodType) throws -> StubProduct {
+        matcher.set(file: self.file, line: self.line)
+        defer { matcher.clearFileAndLine() }
+        let candidates = sequencingPolicy.sorted(methodReturnValues, by: { $0.method.intValue() > $1.method.intValue() })
+        let matched = candidates.first(where: { $0.isValid && MethodType.compareParameters(lhs: $0.method, rhs: method, matcher: matcher).isFullMatch })
+        guard let product = matched?.getProduct(policy: self.stubbingPolicy) else { throw MockError.notStubed }
+        return product
+    }
+    private func methodPerformValue(_ method: MethodType) -> Any? {
+        matcher.set(file: self.file, line: self.line)
+        defer { matcher.clearFileAndLine() }
+        let matched = methodPerformValues.reversed().first { MethodType.compareParameters(lhs: $0.method, rhs: method, matcher: matcher).isFullMatch }
+        return matched?.performs
+    }
+    private func matchingCalls(_ method: MethodType, file: StaticString?, line: UInt?) -> [MethodType] {
+        matcher.set(file: file ?? self.file, line: line ?? self.line)
+        defer { matcher.clearFileAndLine() }
+        return invocations.filter { MethodType.compareParameters(lhs: $0, rhs: method, matcher: matcher).isFullMatch }
+    }
+    private func matchingCalls(_ method: Verify, file: StaticString?, line: UInt?) -> Int {
+        return matchingCalls(method.method, file: file, line: line).count
+    }
+    private func givenGetterValue<T>(_ method: MethodType, _ message: String) -> T {
+        do {
+            return try methodReturnValue(method).casted()
+        } catch {
+            onFatalFailure(message)
+            Failure(message)
+        }
+    }
+    private func optionalGivenGetterValue<T>(_ method: MethodType, _ message: String) -> T? {
+        do {
+            return try methodReturnValue(method).casted()
+        } catch {
+            return nil
+        }
+    }
+    private func onFatalFailure(_ message: String) {
+        guard let file = self.file, let line = self.line else { return } // Let if fail if cannot handle gratefully
+        SwiftyMockyTestObserver.handleFatalError(message: message, file: file, line: line)
+    }
+}
+
 // MARK: - FirestoreService
 
 open class FirestoreServiceMock: FirestoreService, Mock {
@@ -299,12 +491,27 @@ open class FirestoreServiceMock: FirestoreService, Mock {
 		perform?()
     }
 
+    open func delete(id: String) -> AnyPublisher<Void, FirestoreError> {
+        addInvocation(.m_delete__id_id(Parameter<String>.value(`id`)))
+		let perform = methodPerformValue(.m_delete__id_id(Parameter<String>.value(`id`))) as? (String) -> Void
+		perform?(`id`)
+		var __value: AnyPublisher<Void, FirestoreError>
+		do {
+		    __value = try methodReturnValue(.m_delete__id_id(Parameter<String>.value(`id`))).casted()
+		} catch {
+			onFatalFailure("Stub return value not specified for delete(id: String). Use given")
+			Failure("Stub return value not specified for delete(id: String). Use given")
+		}
+		return __value
+    }
+
 
     fileprivate enum MethodType {
         case m_create__id_id_data(Parameter<String>, Parameter<[String: Any]>)
         case m_update__id_id_data(Parameter<String>, Parameter<[String: Any]>)
         case m_startObserving
         case m_stopObserving
+        case m_delete__id_id(Parameter<String>)
 
         static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
             switch (lhs, rhs) {
@@ -323,6 +530,11 @@ open class FirestoreServiceMock: FirestoreService, Mock {
             case (.m_startObserving, .m_startObserving): return .match
 
             case (.m_stopObserving, .m_stopObserving): return .match
+
+            case (.m_delete__id_id(let lhsId), .m_delete__id_id(let rhsId)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsId, rhs: rhsId, with: matcher), lhsId, rhsId, "id"))
+				return Matcher.ComparisonResult(results)
             default: return .none
             }
         }
@@ -333,6 +545,7 @@ open class FirestoreServiceMock: FirestoreService, Mock {
             case let .m_update__id_id_data(p0, p1): return p0.intValue + p1.intValue
             case .m_startObserving: return 0
             case .m_stopObserving: return 0
+            case let .m_delete__id_id(p0): return p0.intValue
             }
         }
         func assertionName() -> String {
@@ -341,6 +554,7 @@ open class FirestoreServiceMock: FirestoreService, Mock {
             case .m_update__id_id_data: return ".update(id:_:)"
             case .m_startObserving: return ".startObserving()"
             case .m_stopObserving: return ".stopObserving()"
+            case .m_delete__id_id: return ".delete(id:)"
             }
         }
     }
@@ -363,6 +577,9 @@ open class FirestoreServiceMock: FirestoreService, Mock {
         public static func startObserving(willReturn: AnyPublisher<[DocumentSnapshotWrapper], Never>...) -> MethodStub {
             return Given(method: .m_startObserving, products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
+        public static func delete(id: Parameter<String>, willReturn: AnyPublisher<Void, FirestoreError>...) -> MethodStub {
+            return Given(method: .m_delete__id_id(`id`), products: willReturn.map({ StubProduct.return($0 as Any) }))
+        }
         public static func create(id: Parameter<String>, _ data: Parameter<[String: Any]>, willProduce: (Stubber<AnyPublisher<Void, FirestoreError>>) -> Void) -> MethodStub {
             let willReturn: [AnyPublisher<Void, FirestoreError>] = []
 			let given: Given = { return Given(method: .m_create__id_id_data(`id`, `data`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
@@ -384,6 +601,13 @@ open class FirestoreServiceMock: FirestoreService, Mock {
 			willProduce(stubber)
 			return given
         }
+        public static func delete(id: Parameter<String>, willProduce: (Stubber<AnyPublisher<Void, FirestoreError>>) -> Void) -> MethodStub {
+            let willReturn: [AnyPublisher<Void, FirestoreError>] = []
+			let given: Given = { return Given(method: .m_delete__id_id(`id`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
+			let stubber = given.stub(for: (AnyPublisher<Void, FirestoreError>).self)
+			willProduce(stubber)
+			return given
+        }
     }
 
     public struct Verify {
@@ -393,6 +617,7 @@ open class FirestoreServiceMock: FirestoreService, Mock {
         public static func update(id: Parameter<String>, _ data: Parameter<[String: Any]>) -> Verify { return Verify(method: .m_update__id_id_data(`id`, `data`))}
         public static func startObserving() -> Verify { return Verify(method: .m_startObserving)}
         public static func stopObserving() -> Verify { return Verify(method: .m_stopObserving)}
+        public static func delete(id: Parameter<String>) -> Verify { return Verify(method: .m_delete__id_id(`id`))}
     }
 
     public struct Perform {
@@ -410,6 +635,9 @@ open class FirestoreServiceMock: FirestoreService, Mock {
         }
         public static func stopObserving(perform: @escaping () -> Void) -> Perform {
             return Perform(method: .m_stopObserving, performs: perform)
+        }
+        public static func delete(id: Parameter<String>, perform: @escaping (String) -> Void) -> Perform {
+            return Perform(method: .m_delete__id_id(`id`), performs: perform)
         }
     }
 
@@ -1841,12 +2069,27 @@ open class UserRepositoryMock: UserRepository, Mock {
 		return __value
     }
 
+    open func delete(user: User) -> AnyPublisher<Void, FirestoreError> {
+        addInvocation(.m_delete__user_user(Parameter<User>.value(`user`)))
+		let perform = methodPerformValue(.m_delete__user_user(Parameter<User>.value(`user`))) as? (User) -> Void
+		perform?(`user`)
+		var __value: AnyPublisher<Void, FirestoreError>
+		do {
+		    __value = try methodReturnValue(.m_delete__user_user(Parameter<User>.value(`user`))).casted()
+		} catch {
+			onFatalFailure("Stub return value not specified for delete(user: User). Use given")
+			Failure("Stub return value not specified for delete(user: User). Use given")
+		}
+		return __value
+    }
+
 
     fileprivate enum MethodType {
         case m_create__user_user(Parameter<User>)
         case m_startObserveUser
         case m_stopObserving
         case m_update__user_user(Parameter<User>)
+        case m_delete__user_user(Parameter<User>)
 
         static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
             switch (lhs, rhs) {
@@ -1863,6 +2106,11 @@ open class UserRepositoryMock: UserRepository, Mock {
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsUser, rhs: rhsUser, with: matcher), lhsUser, rhsUser, "user"))
 				return Matcher.ComparisonResult(results)
+
+            case (.m_delete__user_user(let lhsUser), .m_delete__user_user(let rhsUser)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsUser, rhs: rhsUser, with: matcher), lhsUser, rhsUser, "user"))
+				return Matcher.ComparisonResult(results)
             default: return .none
             }
         }
@@ -1873,6 +2121,7 @@ open class UserRepositoryMock: UserRepository, Mock {
             case .m_startObserveUser: return 0
             case .m_stopObserving: return 0
             case let .m_update__user_user(p0): return p0.intValue
+            case let .m_delete__user_user(p0): return p0.intValue
             }
         }
         func assertionName() -> String {
@@ -1881,6 +2130,7 @@ open class UserRepositoryMock: UserRepository, Mock {
             case .m_startObserveUser: return ".startObserveUser()"
             case .m_stopObserving: return ".stopObserving()"
             case .m_update__user_user: return ".update(user:)"
+            case .m_delete__user_user: return ".delete(user:)"
             }
         }
     }
@@ -1903,6 +2153,9 @@ open class UserRepositoryMock: UserRepository, Mock {
         public static func update(user: Parameter<User>, willReturn: AnyPublisher<Void, FirestoreError>...) -> MethodStub {
             return Given(method: .m_update__user_user(`user`), products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
+        public static func delete(user: Parameter<User>, willReturn: AnyPublisher<Void, FirestoreError>...) -> MethodStub {
+            return Given(method: .m_delete__user_user(`user`), products: willReturn.map({ StubProduct.return($0 as Any) }))
+        }
         public static func create(user: Parameter<User>, willProduce: (Stubber<AnyPublisher<Void, FirestoreError>>) -> Void) -> MethodStub {
             let willReturn: [AnyPublisher<Void, FirestoreError>] = []
 			let given: Given = { return Given(method: .m_create__user_user(`user`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
@@ -1924,6 +2177,13 @@ open class UserRepositoryMock: UserRepository, Mock {
 			willProduce(stubber)
 			return given
         }
+        public static func delete(user: Parameter<User>, willProduce: (Stubber<AnyPublisher<Void, FirestoreError>>) -> Void) -> MethodStub {
+            let willReturn: [AnyPublisher<Void, FirestoreError>] = []
+			let given: Given = { return Given(method: .m_delete__user_user(`user`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
+			let stubber = given.stub(for: (AnyPublisher<Void, FirestoreError>).self)
+			willProduce(stubber)
+			return given
+        }
     }
 
     public struct Verify {
@@ -1933,6 +2193,7 @@ open class UserRepositoryMock: UserRepository, Mock {
         public static func startObserveUser() -> Verify { return Verify(method: .m_startObserveUser)}
         public static func stopObserving() -> Verify { return Verify(method: .m_stopObserving)}
         public static func update(user: Parameter<User>) -> Verify { return Verify(method: .m_update__user_user(`user`))}
+        public static func delete(user: Parameter<User>) -> Verify { return Verify(method: .m_delete__user_user(`user`))}
     }
 
     public struct Perform {
@@ -1950,6 +2211,9 @@ open class UserRepositoryMock: UserRepository, Mock {
         }
         public static func update(user: Parameter<User>, perform: @escaping (User) -> Void) -> Perform {
             return Perform(method: .m_update__user_user(`user`), performs: perform)
+        }
+        public static func delete(user: Parameter<User>, perform: @escaping (User) -> Void) -> Perform {
+            return Perform(method: .m_delete__user_user(`user`), performs: perform)
         }
     }
 

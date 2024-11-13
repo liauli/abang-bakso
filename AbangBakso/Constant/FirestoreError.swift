@@ -15,6 +15,7 @@ enum FirestoreError: Error, Equatable {
     case unknownType
     case failedToSaveUser
     case failedToGetUser
+    case failedToDeleteUser(_ error: Error)
     case generalError(_ error: Error)
     
     static func == (lhs: FirestoreError, rhs: FirestoreError) -> Bool {

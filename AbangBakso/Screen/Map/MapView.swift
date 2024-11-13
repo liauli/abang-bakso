@@ -28,6 +28,8 @@ struct MapView: View {
     
     @Environment(\.scenePhase) private var scenePhase
     
+    @EnvironmentObject var loginVM: LoginViewModel
+    
     var body: some View {
         ZStack(alignment: .topTrailing) {
             mapView
@@ -54,13 +56,18 @@ struct MapView: View {
                 print("no action for \(newValue)")
             }
         })
+        .onChange(of: mapVM.user, { oldValue, newValue in
+            if oldValue != nil && newValue == nil {
+                loginVM.destroySession()
+            }
+        })
     }
     
     private var mapView: some View {
         Map(coordinateRegion: $position, showsUserLocation: true, annotationItems: mapVM.customers) { cust in
             
             MapAnnotation(coordinate: cust.coordinate) {
-                CustomMarker(name: cust.name)
+                CustomMarker(type: cust.type, name: cust.name)
             }
         }
     }
@@ -76,7 +83,7 @@ struct MapView: View {
     
     private var confirmDialog: some View {
         ConfirmationDialog(isShowing: $showDialog) {
-            // Logout
+            mapVM.destroySession()
         }
         .opacity(showDialog ? 1 : 0)
         .animation(.easeInOut(duration: 0.3), value: showDialog)

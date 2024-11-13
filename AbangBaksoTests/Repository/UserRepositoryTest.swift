@@ -136,4 +136,91 @@ class UserRepositoryTest: XCTestCase {
         sut.stopObserving()
         Verify(mockService, .once, .stopObserving())
     }
+    
+    func test_deleteUser_success() {
+        // Arrange
+        let user = User(type: .customer, name: "Test User", location: GeoPoint(latitude: 0, longitude: 0), lastActive: Timestamp(), isActive: true)
+        
+        // Mock service.delete to return success
+        
+        Given(mockService, .delete(id: .value(user.id), willReturn: Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()))
+        
+        // Mock keychain remove operation to succeed
+        Given(mockKeychain, .remove(forKey: .value(KeychainKeys.user.rawValue), willProduce: { make in
+            make.return(())
+        }))
+
+        // Act
+        let expectation = XCTestExpectation(description: "Delete user should succeed")
+        sut.delete(user: user)
+            .sink(receiveCompletion: { completion in
+                if case .failure = completion {
+                    XCTFail("Expected success, but got failure")
+                }
+                expectation.fulfill()
+            }, receiveValue: { })
+            .store(in: &cancellables)
+        
+        // Assert
+        wait(for: [expectation], timeout: 1.0)
+        Verify(mockService, .delete(id: .value(user.id)))
+        Verify(mockKeychain, .remove(forKey: .value(KeychainKeys.user.rawValue)))
+    }
+    
+    func test_deleteUser_failureInServiceDelete() {
+        // Arrange
+        let user = User(type: .customer, name: "Test User", location: GeoPoint(latitude: 0, longitude: 0), lastActive: Timestamp(), isActive: true)
+        let expectedError = FirestoreError.snapshotError(NSError(domain: "", code: -1, userInfo: nil))
+
+        // Mock service.delete to return failure
+        Given(mockService, .delete(id: .value(user.id), willReturn: Fail(error: expectedError).eraseToAnyPublisher()))
+
+        // Act
+        let expectation = XCTestExpectation(description: "Delete user should fail on service error")
+        sut.delete(user: user)
+            .sink(receiveCompletion: { completion in
+                if case let .failure(error) = completion {
+                    XCTAssertEqual(error, expectedError)
+                    expectation.fulfill()
+                }
+            }, receiveValue: { })
+            .store(in: &cancellables)
+
+        // Assert
+        wait(for: [expectation], timeout: 1.0)
+        Verify(mockService, .once, .delete(id: .value(user.id)))
+        Verify(mockKeychain, .never, .remove(forKey: .any))
+    }
+    
+    func test_deleteUser_failureInRemoveUser() {
+        // Arrange
+        let user = User(type: .customer, name: "Test User", location: GeoPoint(latitude: 0, longitude: 0), lastActive: Timestamp(), isActive: true)
+        let expectedError = FirestoreError.failedToDeleteUser(NSError(domain: "", code: -1, userInfo: nil))
+
+        // Mock service.delete to return success
+        Given(mockService, .delete(id: .any, willReturn: Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()))
+        
+        // Mock keychain remove operation to fail
+        Given(mockKeychain, .remove(forKey: .value(KeychainKeys.user.rawValue), willThrow: expectedError))
+
+        // Act
+        let expectation = XCTestExpectation(description: "Delete user should fail on keychain error")
+        sut.delete(user: user)
+            .sink(receiveCompletion: { completion in
+                var isErrorSame = false
+                if case let .failure(error) = completion {
+                    if case .failedToDeleteUser(_) = error {
+                        isErrorSame = true
+                    }
+                    XCTAssertTrue(isErrorSame)
+                    expectation.fulfill()
+                }
+            }, receiveValue: { })
+            .store(in: &cancellables)
+
+        // Assert
+        wait(for: [expectation], timeout: 1.0)
+        Verify(mockService, .once, .delete(id: .value(user.id)))
+        Verify(mockKeychain, .once, .remove(forKey: .value(KeychainKeys.user.rawValue)))
+    }
 }
