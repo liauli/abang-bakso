@@ -36,5 +36,5 @@ struct CustomMarker: View {
 }
 
 #Preview {
-    CustomMarker(name: "Lia")
+    CustomMarker(type: .customer, name: "Lia")
 }
