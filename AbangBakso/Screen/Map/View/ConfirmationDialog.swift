@@ -10,6 +10,9 @@ import SwiftUI
 
 struct ConfirmationDialog: View {
     @Binding var isShowing: Bool
+    
+    var confirmAction: () -> () = {}
+    
     var body: some View {
         if isShowing {
             ZStack(alignment: .bottom) {
@@ -36,9 +39,7 @@ struct ConfirmationDialog: View {
                         .padding(.bottom, 20)
                         
                     
-                    Button(action: {
-                        // Handle OK action
-                    }) {
+                    Button(action: confirmAction) {
                         Text("OK")
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -52,6 +53,8 @@ struct ConfirmationDialog: View {
                     
                     Button(action: {
                         // Handle Cancel action
+                        
+                        isShowing = false
                     }) {
                         Text("Batal")
                             .frame(maxWidth: .infinity)

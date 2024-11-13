@@ -25,6 +25,7 @@ struct MapView: View {
         center: CLLocationCoordinate2D(latitude: -6.222328, longitude: 106.812764),
         span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004)
     )
+    
     @Environment(\.scenePhase) private var scenePhase
     
     var body: some View {
@@ -74,9 +75,12 @@ struct MapView: View {
     }
     
     private var confirmDialog: some View {
-        ConfirmationDialog(isShowing: $showDialog)
-            .opacity(showDialog ? 1 : 0)
-            .animation(.easeInOut(duration: 0.3), value: showDialog)
+        ConfirmationDialog(isShowing: $showDialog) {
+            // Logout
+        }
+        .opacity(showDialog ? 1 : 0)
+        .animation(.easeInOut(duration: 0.3), value: showDialog)
+            
     }
     
     private func setInitialPosition() {
