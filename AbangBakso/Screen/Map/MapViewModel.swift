@@ -38,7 +38,10 @@ class MapViewModel: ObservableObject {
         self.updateUser = updateUser
         self.deleteUser = deleteUser
     }
-    
+}
+
+// MARK: actions
+extension MapViewModel {
     func startObservingCustomers() {
         observeUser.execute().sink { comp in
             // comp

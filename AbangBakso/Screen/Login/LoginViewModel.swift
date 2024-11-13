@@ -40,7 +40,10 @@ class LoginViewModel: ObservableObject {
         
         observeChangesToUpdateButtonState()
     }
-    
+}
+
+// MARK: actions
+extension LoginViewModel {
     func getCurrentLocation() {
         getLocationUpdates.execute().sink { [unowned self] location in
             if location.latitude != self.location?.latitude ?? 0 ||
@@ -93,6 +96,7 @@ class LoginViewModel: ObservableObject {
     }
 }
 
+// MARK: private functions
 extension LoginViewModel {
     fileprivate func createUserPayload(for role: Collection) -> User {
         return User(
