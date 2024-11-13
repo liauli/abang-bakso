@@ -15,6 +15,7 @@ struct ContentView: View {
         if loginVM.isLoggedIn {
             if let user = loginVM.user {
                 MapView(user: user, mapVM: ViewModelProvider.shared.createMapViewModel(for: user.type))
+                    .environmentObject(loginVM)
             }
         } else {
             LoginView(loginVM: loginVM)

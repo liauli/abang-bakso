@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CustomMarker: View {
-    var type: Collection = .customer
+    var type: Collection
     var name: String
     
     var body: some View {

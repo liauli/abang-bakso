@@ -67,6 +67,11 @@ class LoginViewModel: ObservableObject {
                 .store(in: &cancelables)
         }
     }
+    
+    func destroySession() {
+        user = nil
+        isLoggedIn = false
+    }
 }
 
 extension LoginViewModel {

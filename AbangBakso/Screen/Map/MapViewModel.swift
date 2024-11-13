@@ -13,10 +13,10 @@ import FirebaseFirestore
 class MapViewModel: ObservableObject {
     @Published var user: User? = nil
 
-    
     private let observeUser: ObserveUser
     private let updateUser: UpdateUser
     private let observeLocation: GetLocationUpdates?
+    private let deleteUser: DeleteUser
     
     var cancellabels = Set<AnyCancellable>()
     
@@ -30,11 +30,13 @@ class MapViewModel: ObservableObject {
     init(
         _ observeUser: ObserveUser,
         _ updateUser: UpdateUser,
+        _ deleteUser: DeleteUser,
         _ observeLocation: GetLocationUpdates? = nil
     ) {
         self.observeUser = observeUser
         self.observeLocation = observeLocation
         self.updateUser = updateUser
+        self.deleteUser = deleteUser
     }
     
     func startObservingCustomers() {
@@ -82,5 +84,16 @@ class MapViewModel: ObservableObject {
     func setOnline(_ isOnline: Bool) {
         user?.isActive = isOnline
         updateUserData()
+    }
+    
+    func destroySession() {
+        if let user = user {
+            deleteUser
+                .execute(user: user).sink { comp in
+                    // comp
+                } receiveValue: { [weak self] _ in
+                    self?.user = nil
+                }.store(in: &cancellabels)
+        }
     }
 }

@@ -54,6 +54,15 @@ class UserRepositoryImpl: UserRepository {
         }
     }
     
+    private func removeUser() -> AnyPublisher<Void, FirestoreError> {
+        do {
+            try keychain.remove(forKey: KeychainKeys.user.rawValue)
+            
+            return Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
+        } catch {
+            return Fail(error: FirestoreError.failedToDeleteUser(error)).eraseToAnyPublisher()
+        }
+    }
     func stopObserving() {
         return service.stopObserving()
     }
@@ -69,6 +78,6 @@ class UserRepositoryImpl: UserRepository {
     }
     
     func delete(user: User) -> AnyPublisher<Void, FirestoreError> {
-        return service.delete(id: user.id)
+        return service.delete(id: user.id).flatMap(removeUser).eraseToAnyPublisher()
     }
 }
