@@ -1,6 +1,12 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Batal" : {
+
+    },
+    "Dengan menutup halaman ini, kamu akan keluar dari pantauan Tukang Bakso" : {
+
+    },
     "Join" : {
       "localizations" : {
         "id" : {
@@ -94,6 +100,9 @@
           }
         }
       }
+    },
+    "OK" : {
+
     },
     "Role" : {
       "localizations" : {

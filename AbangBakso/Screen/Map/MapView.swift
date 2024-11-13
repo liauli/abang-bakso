@@ -20,20 +20,21 @@ struct MapView: View {
     var user: User
     @StateObject var mapVM: MapViewModel
     
+    @State var showDialog: Bool = false
     @State var position = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: -6.222328, longitude: 106.812764),
         span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004)
     )
+    
     @Environment(\.scenePhase) private var scenePhase
     
     var body: some View {
-        Map(coordinateRegion: $position, showsUserLocation: true, annotationItems: mapVM.customers) { cust in
-            
-            MapAnnotation(coordinate: cust.coordinate) {
-                CustomMarker(name: cust.name)
-            }
+        ZStack(alignment: .topTrailing) {
+            mapView
+            closeButton
         }
         .edgesIgnoringSafeArea(.all)
+        .overlay(confirmDialog)
         .onAppear {
             setInitialPosition()
             mapVM.startObservingCustomers()
@@ -42,18 +43,44 @@ struct MapView: View {
         .onDisappear {
             mapVM.stopObserving()
             mapVM.setOnline(false)
-            
         }
-        .onChange(of: scenePhase) { newScenePhase in
-            switch newScenePhase {
+        .onChange(of: scenePhase, { oldValue, newValue in
+            switch newValue {
             case .active:
-               mapVM.setOnline(true)
+                mapVM.setOnline(true)
             case .background:
                 mapVM.setOnline(false)
             default:
-                print("no action")
+                print("no action for \(newValue)")
+            }
+        })
+    }
+    
+    private var mapView: some View {
+        Map(coordinateRegion: $position, showsUserLocation: true, annotationItems: mapVM.customers) { cust in
+            
+            MapAnnotation(coordinate: cust.coordinate) {
+                CustomMarker(name: cust.name)
             }
         }
+    }
+    
+    private var closeButton: some View {
+        Button {
+            showDialog = true
+        } label: {
+            Image("close_icon")
+                .frame(width: 24, height: 24)
+        }.padding(50)
+    }
+    
+    private var confirmDialog: some View {
+        ConfirmationDialog(isShowing: $showDialog) {
+            // Logout
+        }
+        .opacity(showDialog ? 1 : 0)
+        .animation(.easeInOut(duration: 0.3), value: showDialog)
+            
     }
     
     private func setInitialPosition() {
