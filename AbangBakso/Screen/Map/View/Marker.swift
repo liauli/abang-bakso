@@ -38,3 +38,8 @@ struct CustomMarker: View {
 #Preview {
     CustomMarker(type: .customer, name: "Lia")
 }
+
+struct Trigger {
+    var name: String
+    var naaaame : String
+}
