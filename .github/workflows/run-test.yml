@@ -47,9 +47,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/cocoapods@master
-	env:
+      	env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
+     	with:
           args: --severity-threshold=high
 
   build_and_archive:
