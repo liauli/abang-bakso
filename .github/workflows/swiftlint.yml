@@ -23,7 +23,7 @@ jobs:
         id: swiftlint
         run: |
           # Find modified Swift files and lint each one
-          LINT_RESULT=$(git diff origin/main --name-only | grep "\.swift$" | while read filename; do
+          LINT_RESULT=$(git diff main --name-only | grep "\.swift$" | while read filename; do
               swiftlint lint --path "$filename"
           done)
           
