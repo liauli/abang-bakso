@@ -26,17 +26,18 @@ jobs:
           LINT_RESULT=$(git diff --name-only | grep "\.swift$" | while read filename; do
               swiftlint lint --path "$filename"
           done)
+          
           echo "$LINT_RESULT"
-          echo "::set-output name=lint_result::$LINT_RESULT"
+          echo "lint_result=$LINT_RESULT" >> $GITHUB_ENV
 
       # Step 4: Post SwiftLint results as a PR comment
       - name: Post SwiftLint results to PR
-        if: ${{ steps.swiftlint.outputs.lint_result != '' }}
+        if: ${{ env.lint_result != '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINT_RESULT: ${{ env.lint_result }}
         run: |
           # Prepare the comment body
-          LINT_RESULT="${{ steps.swiftlint.outputs.lint_result }}"
           COMMENT_BODY="**SwiftLint Results** for PR #${{ github.event.pull_request.number }}:\n\n\`\`\`\n$LINT_RESULT\n\`\`\`"
 
           # Post the comment to the PR
