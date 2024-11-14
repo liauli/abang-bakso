@@ -1,7 +1,7 @@
 name: SwiftLint PR Check
 
 on:
-  push:
+  pull_request:
     paths:
       - '**/*.swift'  # Trigger only on changes to Swift files
 
@@ -10,66 +10,38 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      # Step 1: Checkout the repository
+      # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Set up SwiftLint
-      - name: Set up SwiftLint
+      # Step 2: Install SwiftLint
+      - name: Install SwiftLint
         run: brew install swiftlint
 
-      # Step 3: Get the changed files in the PR
-      - name: Get changed files
-        id: get_files
+      # Step 3: Run SwiftLint on modified files and capture output
+      - name: Run SwiftLint on modified files
+        id: swiftlint
         run: |
-          echo "::set-output name=files::$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '.swift$')"
+          # Find modified Swift files and lint each one
+          LINT_RESULT=$(git diff HEAD~1 --name-only | grep "\.swift$" | while read filename; do
+              swiftlint lint --path "$filename"
+          done)
+          echo "$LINT_RESULT"
+          echo "::set-output name=lint_result::$LINT_RESULT"
 
-      # Step 4: Run SwiftLint on the changed files
-      - name: Run SwiftLint
-        run: |
-          changed_files="${{ steps.get_files.outputs.files }}"
-          if [ -n "$changed_files" ]; then
-            swiftlint lint --path $changed_files
-          else
-            echo "No Swift files changed."
-          fi
-
-      # Step 5: Post SwiftLint results as a PR comment
+      # Step 4: Post SwiftLint results as a PR comment
       - name: Post SwiftLint results to PR
+        if: ${{ steps.swiftlint.outputs.lint_result != '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Get the list of changed files
-          CHANGED_FILES="${{ steps.get_files.outputs.files }}"
+          # Prepare the comment body
+          LINT_RESULT="${{ steps.swiftlint.outputs.lint_result }}"
+          COMMENT_BODY="**SwiftLint Results** for PR #${{ github.event.pull_request.number }}:\n\n\`\`\`\n$LINT_RESULT\n\`\`\`"
 
-          # Run SwiftLint and capture the result
-          if [ -n "$CHANGED_FILES" ]; then
-            lint_results=$(swiftlint lint --path $CHANGED_FILES)
-          else
-            lint_results="No Swift files changed."
-          fi
-
-          # Post the comment on the PR (replace if exists)
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          COMMENT_BODY="**SwiftLint Results** for PR #$PR_NUMBER:\n\n$lint_results"
-
-          # Get the existing comments and find the one with the same body
-          existing_comments=$(curl -s \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments")
-
-          # Check if a comment already exists and delete it if found
-          comment_id=$(echo "$existing_comments" | jq '.[0].id' | tr -d '"')
-          if [ "$comment_id" != "null" ]; then
-            curl -s -X DELETE \
-              -H "Authorization: token $GITHUB_TOKEN" \
-              "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id"
-          fi
-
-          # Post the new comment with the SwiftLint results
+          # Post the comment to the PR
           curl -s -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
             -d "{\"body\": \"$COMMENT_BODY\"}" \
-            "https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments"
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
