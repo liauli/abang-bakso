@@ -13,8 +13,6 @@ jobs:
       # Step 1: Checkout the code
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Fetch base branch
-        run: git fetch origin main
 
       # Step 2: Install SwiftLint
       - name: Install SwiftLint
@@ -25,7 +23,9 @@ jobs:
         id: swiftlint
         run: |
           # Find modified Swift files and lint each one
-          LINT_RESULT=$(git diff main --name-only | grep "\.swift$" | while read filename; do
+          BRANCH_NAME=${GITHUB_REF##*/}
+	  git fetch origin main
+          LINT_RESULT=$(git diff "$BRANCH_NAME" main --name-only | grep "\.swift$" | while read filename; do
               swiftlint lint --path "$filename"
           done)
           
