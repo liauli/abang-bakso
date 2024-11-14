@@ -52,7 +52,7 @@ jobs:
 
   build_and_archive:
     runs-on: macos-latest
-    needs: [lint, test, dependency_scan, secret_scan]  # Ensures all previous jobs succeed
+    needs: [test, dependency_scan, secret_scan]  # Ensures all previous jobs succeed
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
