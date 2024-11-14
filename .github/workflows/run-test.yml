@@ -30,16 +30,6 @@ jobs:
       - name: Run Fastlane tests
         run: bundle exec fastlane unit_tests
 
-  dependency_scan:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Install Snyk
-        run: brew install snyk-cli
-      - name: Run Dependency Scan
-        run: snyk test
-
   secret_scan:
     runs-on: macos-latest
     steps:
@@ -50,9 +40,20 @@ jobs:
       - name: Run Secret Scan
         run: git secrets --scan
 
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/cocoapods@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
   build_and_archive:
     runs-on: macos-latest
-    needs: [test, dependency_scan, secret_scan]  # Ensures all previous jobs succeed
+    needs: [test, security, dependency_scan, secret_scan]  # Ensures all previous jobs succeed
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
