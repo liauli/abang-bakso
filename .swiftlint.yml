@@ -1,0 +1,6 @@
+included: 
+  - AbangBakso
+  - AbangBaksoTests
+excluded: 
+  - Pods
+  - AbangBaksoTests/Mock.generated.swift
