@@ -26,3 +26,9 @@ jobs:
 
       - name: Run Fastlane tests
         run: bundle exec fastlane unit_tests
+
+  lint:
+    runs-on: macos-latest
+    steps:
+      - name: Run Fastlane lint
+        run: bundle exec fastlane lint

@@ -61,7 +61,7 @@ class DeleteUserTests: XCTestCase {
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
                     var isErrorEqual = false
-                    if case .failedToDeleteUser(let _) = error {
+                    if case .failedToDeleteUser = error {
                         isErrorEqual = true
                     }
                     XCTAssertTrue(isErrorEqual)

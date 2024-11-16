@@ -84,7 +84,7 @@ extension LoginViewModel {
         getCurrentUser.execute()
             .subscribe(on: Scheduler.background)
             .receive(on: RunLoop.main)
-            .sink(receiveCompletion: { comp in
+            .sink(receiveCompletion: { _ in
                 // no op handle error
             }, receiveValue: { [weak self] user in
                 if user != nil {

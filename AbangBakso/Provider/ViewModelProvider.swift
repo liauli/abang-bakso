@@ -17,7 +17,7 @@ class ViewModelProvider {
     func createLoginViewModel() -> LoginViewModel {
         return LoginViewModel(
             domain.createCreateUser(type: .customer),
-            domain.createCreateUser(type: .seller), 
+            domain.createCreateUser(type: .seller),
             domain.createGetLocationUpdates(),
             domain.createGetCurrentUser(type: .customer)
         )
