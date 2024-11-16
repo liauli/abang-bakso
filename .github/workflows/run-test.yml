@@ -17,13 +17,14 @@ jobs:
 
       - name: Install dependencies
         run: bundle install
-      - name: Run Fastlane lint
-        run: bundle exec fastlane lint
+
       - name: Install XcodeGen
         run: brew install xcodegen
 
       - name: Generate Xcode project
         run: xcodegen generate
+
+
 
       - name: Run Fastlane tests
         run: bundle exec fastlane unit_tests
@@ -31,4 +32,15 @@ jobs:
   lint:
     runs-on: macos-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0' 
+          bundler-cache: true
+      - name: Install dependencies
+        run: bundle install
+      - name: Run Fastlane lint
+        run: bundle exec fastlane lint
       
