@@ -17,7 +17,8 @@ jobs:
 
       - name: Install dependencies
         run: bundle install
-
+      - name: Run Fastlane lint
+        run: bundle exec fastlane lint
       - name: Install XcodeGen
         run: brew install xcodegen
 
@@ -30,5 +31,4 @@ jobs:
   lint:
     runs-on: macos-latest
     steps:
-      - name: Run Fastlane lint
-        run: bundle exec fastlane lint
+      
