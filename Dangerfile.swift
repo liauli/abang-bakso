@@ -1,6 +1,6 @@
 import Danger
 import Foundation
-import DangerSwiftLint
+import DangerSwiftLint // package: https://github.com/ashfurrow/danger-swiftlint.git
 
 let danger = Danger()
 let editedFiles = danger.git.modifiedFiles + danger.git.createdFiles
