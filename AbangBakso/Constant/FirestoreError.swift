@@ -8,7 +8,7 @@
 import Foundation
 
 enum FirestoreError: Error, Equatable {
-    
+
     case documentExists
     case snapshotError(_ error: Error)
     case modelInitializationFailed
@@ -17,7 +17,7 @@ enum FirestoreError: Error, Equatable {
     case failedToGetUser
     case failedToDeleteUser(_ error: Error)
     case generalError(_ error: Error)
-    
+
     static func == (lhs: FirestoreError, rhs: FirestoreError) -> Bool {
             switch (lhs, rhs) {
             case (.documentExists, .documentExists):

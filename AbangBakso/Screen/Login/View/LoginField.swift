@@ -11,7 +11,7 @@ struct LoginField: View {
     @Binding var text: String
     var label: String
     var hint: String
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(label)

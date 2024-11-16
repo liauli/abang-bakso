@@ -14,11 +14,11 @@ protocol CreateUser: AutoMockable {
 
 class CreateUserImpl: CreateUser {
     private let userRepository: UserRepository
-    
+
     init(_ userRepository: UserRepository) {
         self.userRepository = userRepository
     }
-    
+
     func execute(user: User) -> AnyPublisher<Void, FirestoreError> {
         return userRepository.create(user: user)
     }

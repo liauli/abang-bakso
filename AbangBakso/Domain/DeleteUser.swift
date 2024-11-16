@@ -14,14 +14,12 @@ protocol DeleteUser: AutoMockable {
 
 class DeleteUserImpl: DeleteUser {
     private let userRepository: UserRepository
-    
+
     init(_ userRepository: UserRepository) {
         self.userRepository = userRepository
     }
-    
-    func execute(user: User)  -> AnyPublisher<Void, FirestoreError>{
+
+    func execute(user: User) -> AnyPublisher<Void, FirestoreError> {
         return userRepository.delete(user: user)
     }
 }
-
-

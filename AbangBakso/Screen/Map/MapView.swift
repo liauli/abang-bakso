@@ -19,17 +19,17 @@ struct LocationAnnotation: Identifiable {
 struct MapView: View {
     var user: User
     @StateObject var mapVM: MapViewModel
-    
+
     @State var showDialog: Bool = false
     @State var position = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: -6.222328, longitude: 106.812764),
         span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004)
     )
-    
+
     @Environment(\.scenePhase) private var scenePhase
-    
+
     @EnvironmentObject var loginVM: LoginViewModel
-    
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
             mapView
@@ -46,7 +46,7 @@ struct MapView: View {
             mapVM.stopObserving()
             mapVM.setOnline(false)
         }
-        .onChange(of: scenePhase, { oldValue, newValue in
+        .onChange(of: scenePhase, { _, newValue in
             switch newValue {
             case .active:
                 mapVM.setOnline(true)
@@ -62,16 +62,16 @@ struct MapView: View {
             }
         })
     }
-    
+
     private var mapView: some View {
         Map(coordinateRegion: $position, showsUserLocation: true, annotationItems: mapVM.customers) { cust in
-            
+
             MapAnnotation(coordinate: cust.coordinate) {
                 CustomMarker(type: cust.type, name: cust.name)
             }
         }
     }
-    
+
     private var closeButton: some View {
         Button {
             showDialog = true
@@ -80,16 +80,16 @@ struct MapView: View {
                 .frame(width: 24, height: 24)
         }.padding(50)
     }
-    
+
     private var confirmDialog: some View {
         ConfirmationDialog(isShowing: $showDialog) {
             mapVM.destroySession()
         }
         .opacity(showDialog ? 1 : 0)
         .animation(.easeInOut(duration: 0.3), value: showDialog)
-            
+
     }
-    
+
     private func setInitialPosition() {
         mapVM.user = user
         position = MKCoordinateRegion(

@@ -33,14 +33,14 @@ class ObserveUserTests: XCTestCase {
     func testExecute_WhenCalled_ShouldReturnUsers() {
         let expectedUsers = [
             DummyBuilder.createUser(type: .seller, name: "John"),
-            DummyBuilder.createUser(type: .seller, name: "Alice"),
+            DummyBuilder.createUser(type: .seller, name: "Alice")
         ]
-        
+
         Given(userRepositoryMock, .startObserveUser(willReturn: Just(expectedUsers).eraseToAnyPublisher()))
-        
+
         var result: [User] = []
         let expectation = XCTestExpectation(description: "success")
-        
+
         sut.execute()
             .sink(receiveCompletion: { _ in
                 expectation.fulfill()
@@ -53,33 +53,33 @@ class ObserveUserTests: XCTestCase {
                 XCTAssertEqual(result.last?.name, "Alice")
             })
             .store(in: &cancellables)
-        
+
         wait(for: [expectation], timeout: 1)
     }
 
     func testExecute_WhenRepositoryReturnsEmpty_ShouldReturnEmptyArray() {
         let expectedUsers: [User] = []
-        
+
         userRepositoryMock.given(.startObserveUser(willReturn: Just(expectedUsers).eraseToAnyPublisher()))
-        
+
         var result: [User] = []
         let expectation = XCTestExpectation(description: "success")
-        
+
         sut.execute()
             .sink(receiveCompletion: { _ in
                 expectation.fulfill()
             }, receiveValue: { users in
                 Verify(self.userRepositoryMock, .once, .startObserveUser())
-                
+
                 result = users
                 XCTAssertNotNil(result)
                 XCTAssertEqual(result.count, 0)
             })
             .store(in: &cancellables)
-        
+
         wait(for: [expectation], timeout: 1)
     }
-    
+
     func test_stopObserving() {
         sut.stop()
         Verify(userRepositoryMock, .once, .stopObserving())

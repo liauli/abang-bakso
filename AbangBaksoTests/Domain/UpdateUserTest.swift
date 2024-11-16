@@ -31,12 +31,19 @@ final class UpdateUserImplTests: XCTestCase {
         cancellables = nil
         super.tearDown()
     }
-    
+
     func test_execute_callsUserRepositoryUpdate() {
         // Arrange
-        let user = User(type: .customer, name: "Test User", location: GeoPoint(latitude: 0, longitude: 0), lastActive: Timestamp(), isActive: true)
-        Given(userRepositoryMock, .update(user: .value(user), willReturn: Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()))
-        
+        let user = DummyBuilder.createUser(type: .customer)
+        Given(
+            userRepositoryMock,
+                .update(
+                    user: .value(user),
+                    willReturn:
+                        Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
+                )
+        )
+
         // Act
         let expectation = XCTestExpectation(description: "Should call userRepository.update and complete successfully")
         updateUser.execute(user: user)
@@ -47,17 +54,23 @@ final class UpdateUserImplTests: XCTestCase {
                 expectation.fulfill()
             }, receiveValue: { })
             .store(in: &cancellables)
-        
+
         // Assert
         Verify(userRepositoryMock, .update(user: .value(user)))
         wait(for: [expectation], timeout: 1.0)
     }
-    
+
     func test_execute_returnsErrorFromRepository() {
         // Arrange
-        let user = User(type: .customer, name: "Test User", location: GeoPoint(latitude: 0, longitude: 0), lastActive: Timestamp(), isActive: true)
+        let user = DummyBuilder.createUser(type: .customer)
         let expectedError = FirestoreError.snapshotError(NSError(domain: "", code: -1, userInfo: nil))
-        Given(userRepositoryMock, .update(user: .value(user), willReturn: Fail(error: expectedError).eraseToAnyPublisher()))
+        Given(
+            userRepositoryMock,
+                .update(
+                    user: .value(user),
+                    willReturn: Fail(error: expectedError).eraseToAnyPublisher()
+                )
+        )
 
         // Act
         let expectation = XCTestExpectation(description: "Should return failure with FirestoreError")
@@ -69,7 +82,7 @@ final class UpdateUserImplTests: XCTestCase {
                 }
             }, receiveValue: { })
             .store(in: &cancellables)
-        
+
         // Assert
         Verify(userRepositoryMock, .update(user: .value(user)))
         wait(for: [expectation], timeout: 1.0)

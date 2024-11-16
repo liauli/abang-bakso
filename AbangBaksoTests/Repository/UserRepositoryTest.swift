@@ -15,17 +15,17 @@ import FirebaseFirestore
 
 class UserRepositoryTest: XCTestCase {
     private var sut: UserRepository!
-    
+
     private var mockService = FirestoreServiceMock()
     private var mockKeychain = KeychainFacadeMock()
-    
+
     private var cancellables: Set<AnyCancellable> = []
-    
+
     override func setUp() {
         registerMatcher()
         sut = UserRepositoryImpl(mockService, mockKeychain)
     }
-    
+
     // MARK: Test for create(user: User)
     func test_create_success() {
         let expectedSeller = DummyBuilder.createUser(type: .seller)
@@ -36,22 +36,29 @@ class UserRepositoryTest: XCTestCase {
                 willReturn: success(())
             )
         )
-        Given(mockKeychain, .set(data: .any(Data.self), forKey: .value(KeychainKeys.user.rawValue), willProduce: { make in
-            make.return(())
-        }))
-        
+        Given(
+            mockKeychain,
+                .set(
+                    data: .any(Data.self),
+                    forKey: .value(KeychainKeys.user.rawValue),
+                    willProduce: { make in
+                        make.return(())
+                    }
+                )
+        )
+
         let expectation = XCTestExpectation(description: "success")
-        
+
         sut.create(user: expectedSeller).sink { _ in
             expectation.fulfill()
-          } receiveValue: { response in
+          } receiveValue: { _ in
               Verify(self.mockService, .once, .create(id: .any, .any))
               Verify(self.mockKeychain, .once, .set(data: .any(Data.self), forKey: .value(KeychainKeys.user.rawValue)))
           }.store(in: &cancellables)
 
           wait(for: [expectation], timeout: 1)
     }
-    
+
     func test_create_failed_shouldFail() {
         let expectedCustomer = DummyBuilder.createUser(type: .customer)
         let expectedError = FirestoreError.documentExists
@@ -62,9 +69,9 @@ class UserRepositoryTest: XCTestCase {
                 willReturn: failed(.documentExists)
             )
         )
-        
+
         let expectation = XCTestExpectation(description: "success")
-        
+
         sut.create(user: expectedCustomer).sink { completion in
             if case .failure(let error) = completion {
                 XCTAssertEqual(expectedError, error)
@@ -73,16 +80,16 @@ class UserRepositoryTest: XCTestCase {
                 expectation.fulfill()
             }
           } receiveValue: { _ in
-            //no result
+            // no result
           }.store(in: &cancellables)
 
           wait(for: [expectation], timeout: 1)
     }
-    
+
     func test_create_sellerType_saveUser_keychainSetFailed_shouldFail() {
         let expectedSeller = DummyBuilder.createUser(type: .seller)
         let expectedError = FirestoreError.failedToSaveUser
-        
+
         Given(mockService,
             .create(
                 id: .value(expectedSeller.name),
@@ -90,12 +97,19 @@ class UserRepositoryTest: XCTestCase {
                 willReturn: success(())
             )
         )
-        Given(mockKeychain, .set(data: .any(Data.self), forKey: .value(KeychainKeys.user.rawValue), willProduce: { make in
-            make.throw(expectedError)
-        }))
-        
+        Given(
+            mockKeychain,
+                .set(
+                    data: .any(Data.self),
+                    forKey: .value(KeychainKeys.user.rawValue),
+                    willProduce: { make in
+                        make.throw(expectedError)
+                    }
+                )
+        )
+
         let expectation = XCTestExpectation(description: "success")
-        
+
         sut.create(user: expectedSeller).sink { completion in
             if case .failure(let error) = completion {
                 XCTAssertEqual(expectedError, error)
@@ -104,25 +118,24 @@ class UserRepositoryTest: XCTestCase {
                 expectation.fulfill()
             }
           } receiveValue: { _ in
-            //no result
+            // no result
           }.store(in: &cancellables)
 
           wait(for: [expectation], timeout: 1)
     }
-    
-    
+
     func test_startObserveUser_should_return_users() {
         let dummyUser = DummyBuilder.createUser(type: .customer)
-        
+
         let dummyDocuments = [
             DocumentSnapshotWrapper(data: dummyUser.dictionary, isExists: false)
         ]
         Given(mockService,
             .startObserving(willReturn: alwaysSuccess(dummyDocuments))
         )
-        
+
         let expectation = XCTestExpectation(description: "success")
-        
+
         sut.startObserveUser().sink { _ in
             expectation.fulfill()
           } receiveValue: { response in
@@ -131,20 +144,27 @@ class UserRepositoryTest: XCTestCase {
           }.store(in: &cancellables)
         wait(for: [expectation], timeout: 1)
     }
-    
+
     func test_stopObserving() {
         sut.stopObserving()
         Verify(mockService, .once, .stopObserving())
     }
-    
+
     func test_deleteUser_success() {
         // Arrange
-        let user = User(type: .customer, name: "Test User", location: GeoPoint(latitude: 0, longitude: 0), lastActive: Timestamp(), isActive: true)
-        
+        let user = DummyBuilder.createUser(type: .customer)
+
         // Mock service.delete to return success
-        
-        Given(mockService, .delete(id: .value(user.id), willReturn: Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()))
-        
+
+        Given(
+            mockService,
+                .delete(
+                    id: .value(user.id),
+                    willReturn: Just(()).setFailureType(
+                        to: FirestoreError.self).eraseToAnyPublisher()
+                )
+        )
+
         // Mock keychain remove operation to succeed
         Given(mockKeychain, .remove(forKey: .value(KeychainKeys.user.rawValue), willProduce: { make in
             make.return(())
@@ -160,16 +180,16 @@ class UserRepositoryTest: XCTestCase {
                 expectation.fulfill()
             }, receiveValue: { })
             .store(in: &cancellables)
-        
+
         // Assert
         wait(for: [expectation], timeout: 1.0)
         Verify(mockService, .delete(id: .value(user.id)))
         Verify(mockKeychain, .remove(forKey: .value(KeychainKeys.user.rawValue)))
     }
-    
+
     func test_deleteUser_failureInServiceDelete() {
         // Arrange
-        let user = User(type: .customer, name: "Test User", location: GeoPoint(latitude: 0, longitude: 0), lastActive: Timestamp(), isActive: true)
+        let user = DummyBuilder.createUser(type: .customer)
         let expectedError = FirestoreError.snapshotError(NSError(domain: "", code: -1, userInfo: nil))
 
         // Mock service.delete to return failure
@@ -191,15 +211,20 @@ class UserRepositoryTest: XCTestCase {
         Verify(mockService, .once, .delete(id: .value(user.id)))
         Verify(mockKeychain, .never, .remove(forKey: .any))
     }
-    
+
     func test_deleteUser_failureInRemoveUser() {
         // Arrange
-        let user = User(type: .customer, name: "Test User", location: GeoPoint(latitude: 0, longitude: 0), lastActive: Timestamp(), isActive: true)
+        let user = DummyBuilder.createUser(type: .customer)
         let expectedError = FirestoreError.failedToDeleteUser(NSError(domain: "", code: -1, userInfo: nil))
 
         // Mock service.delete to return success
-        Given(mockService, .delete(id: .any, willReturn: Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()))
-        
+        Given(
+            mockService, .delete(
+                id: .any,
+                willReturn: Just(()).setFailureType(
+                    to: FirestoreError.self).eraseToAnyPublisher()
+            )
+        )
         // Mock keychain remove operation to fail
         Given(mockKeychain, .remove(forKey: .value(KeychainKeys.user.rawValue), willThrow: expectedError))
 
@@ -209,7 +234,7 @@ class UserRepositoryTest: XCTestCase {
             .sink(receiveCompletion: { completion in
                 var isErrorSame = false
                 if case let .failure(error) = completion {
-                    if case .failedToDeleteUser(_) = error {
+                    if case .failedToDeleteUser = error {
                         isErrorSame = true
                     }
                     XCTAssertTrue(isErrorSame)

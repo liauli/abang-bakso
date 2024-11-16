@@ -15,15 +15,15 @@ protocol ObserveUser: AutoMockable {
 
 class ObserveUserImpl: ObserveUser {
     private let userRepository: UserRepository
-    
+
     init(_ userRepository: UserRepository) {
         self.userRepository = userRepository
     }
-    
+
     func execute() -> AnyPublisher<[User], Never> {
         return userRepository.startObserveUser()
     }
-    
+
     func stop() {
         userRepository.stopObserving()
     }

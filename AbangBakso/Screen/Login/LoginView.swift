@@ -9,9 +9,9 @@ import SwiftUI
 
 struct LoginView: View {
     let userTypes = Collection.allCases.map { $0.rawValue }
-    
+
     @ObservedObject var loginVM: LoginViewModel
-    
+
     var body: some View {
         VStack {
             loginHeader
@@ -30,7 +30,7 @@ struct LoginView: View {
             loginVM.getCurrentLocation()
         }
     }
-    
+
     private var loginHeader: some View {
         VStack {
             Image("login_img")
@@ -38,12 +38,16 @@ struct LoginView: View {
             Text("Masukkan nama dan role Anda di bawah ini:").fontBody2()
         }
     }
-    
+
     private var loginForm: some View {
         VStack {
-            LoginField(text: $loginVM.name, label: String(localized: "Nama"), hint: String(localized: "Masukkan Nama")).padding(.top, 16)
+            LoginField(
+                text: $loginVM.name,
+                label: String(localized: "Nama"),
+                hint: String(localized: "Masukkan Nama"))
+            .padding(.top, 16)
             LoginRoleSelection(menus: userTypes, selectedMenu: $loginVM.role)
-            
+
             Button {
                 loginVM.doCreateUser()
             } label: {
@@ -55,7 +59,7 @@ struct LoginView: View {
             .buttonStyle(.borderedProminent)
             .tint(.tselRed)
             .disabled(!loginVM.isTermChecked)
-            
+
             CheckboxView(
                 isChecked: $loginVM.isTermChecked,
                 label: String(localized: "login_checkbox_text"))
@@ -64,6 +68,6 @@ struct LoginView: View {
     }
 }
 
-//#Preview {
-    //LoginView()
-//}
+// #Preview {
+    // LoginView()
+// }

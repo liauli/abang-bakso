@@ -50,11 +50,11 @@ final class GetLocationUpdatesImplTests: XCTestCase {
         Verify(locationRepositoryMock, .getLocationUpdates())
         wait(for: [expectation], timeout: 1.0)
     }
-    
+
     func test_stop_callsRepositoryStopUpdate() {
         // Act
         getLocationUpdates.stop()
-        
+
         // Assert
         Verify(locationRepositoryMock, .stopUpdate())
     }

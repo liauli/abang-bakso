@@ -10,10 +10,10 @@ import SwiftUI
 
 struct RoundedTextField: View {
     @Binding var text: String
-    
+
     var hint: String = ""
     var height: CGFloat = 45
-    
+
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 8)

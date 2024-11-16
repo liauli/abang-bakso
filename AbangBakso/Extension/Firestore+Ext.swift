@@ -25,7 +25,11 @@ extension DocumentReference {
 }
 
 extension CollectionReference {
-    func setDataPublisher(for id: String, data: [String: Any], merge: Bool = true) -> AnyPublisher<Void, FirestoreError> {
+    func setDataPublisher(
+        for id: String,
+        data: [String: Any],
+        merge: Bool = true
+    ) -> AnyPublisher<Void, FirestoreError> {
         Future { promise in
             self.document(id).setData(data, merge: merge) { error in
                 if let error = error {
@@ -37,10 +41,10 @@ extension CollectionReference {
         }
         .eraseToAnyPublisher()
     }
-    
+
     func setDocumentIfNotExists(for id: String, data: [String: Any]) -> AnyPublisher<Void, FirestoreError> {
             let documentRef = self.document(id)
-            
+
             return Future { [weak self] promise in
                 // Check if document already exists
                 self?.handleDataPromise(documentRef, data: data) { isSuccess, error in
@@ -50,11 +54,11 @@ extension CollectionReference {
                         promise(.success(()))
                     }
                 }
-                
+
             }
             .eraseToAnyPublisher()
         }
-    
+
     private func handleDataPromise(
         _ documentRef: DocumentReference,
         data: [String: Any],
@@ -78,10 +82,10 @@ extension CollectionReference {
             }
         }
     }
-    
+
     func deleteDocument(withID documentID: String) -> AnyPublisher<Void, FirestoreError> {
             let documentRef = self.document(documentID)
-            
+
             return Future { promise in
                 documentRef.delete { error in
                     if let error = error {
@@ -96,9 +100,11 @@ extension CollectionReference {
 }
 
 extension Query {
-    func snapshotPublisher(listenerReg: @escaping (ListenerRegistration) -> Void) -> AnyPublisher<QuerySnapshot, FirestoreError> {
+    func snapshotPublisher(
+        listenerReg: @escaping (ListenerRegistration) -> Void
+    ) -> AnyPublisher<QuerySnapshot, FirestoreError> {
         let subject = PassthroughSubject<QuerySnapshot, FirestoreError>()
-        
+
         let listener = self.addSnapshotListener { snapshot, error in
             if let error = error {
                 subject.send(completion: .failure(.snapshotError(error)))
@@ -106,14 +112,14 @@ extension Query {
                 subject.send(snapshot)
             }
         }
-        
+
         listenerReg(listener)
-        
+
         return subject
             .handleEvents(receiveCancel: {
                 listener.remove()
             })
             .eraseToAnyPublisher()
     }
-                
+
 }

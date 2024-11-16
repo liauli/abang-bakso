@@ -16,6 +16,7 @@ final class LoginViewModelTests: XCTestCase {
     private var createCustomerUserMock: CreateUserMock!
     private var createSellerUserMock: CreateUserMock!
     private var getLocationUpdatesMock: GetLocationUpdatesMock!
+    private var getCurrentUserMock: GetCurrentUserMock!
     private var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
@@ -23,8 +24,13 @@ final class LoginViewModelTests: XCTestCase {
         createCustomerUserMock = CreateUserMock()
         createSellerUserMock = CreateUserMock()
         getLocationUpdatesMock = GetLocationUpdatesMock()
-        
-        viewModel = LoginViewModel(createCustomerUserMock, createSellerUserMock, getLocationUpdatesMock)
+        getCurrentUserMock = GetCurrentUserMock()
+
+        viewModel = LoginViewModel(
+            createCustomerUserMock,
+            createSellerUserMock,
+            getLocationUpdatesMock,
+            getCurrentUserMock)
         cancellables = []
     }
 
@@ -34,9 +40,10 @@ final class LoginViewModelTests: XCTestCase {
         createSellerUserMock = nil
         getLocationUpdatesMock = nil
         cancellables = nil
+        getCurrentUserMock = nil
         super.tearDown()
     }
-    
+
     // MARK: - Test Initial State
 
     func test_initialState() {
@@ -47,7 +54,7 @@ final class LoginViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isLoggedIn)
         XCTAssertNil(viewModel.location)
     }
-    
+
     // MARK: - Test Button Enabled State
     func test_buttonEnabled_whenNameRoleAndTermsSet() {
         viewModel.name = "Test User"
@@ -55,23 +62,22 @@ final class LoginViewModelTests: XCTestCase {
         viewModel.isTermChecked = true
 
         XCTAssertTrue(viewModel.isButtonEnabled)
-        
+
         viewModel.isTermChecked = false
         XCTAssertFalse(viewModel.isButtonEnabled)
-        
+
         viewModel.isTermChecked = true
         XCTAssertTrue(viewModel.isButtonEnabled)
-        
+
         viewModel.role = nil
         XCTAssertFalse(viewModel.isButtonEnabled)
-        
+
         viewModel.role = .seller
         XCTAssertTrue(viewModel.isButtonEnabled)
-        
+
         viewModel.name = ""
         XCTAssertFalse(viewModel.isButtonEnabled)
-        
-        
+
     }
 
     func test_buttonDisabled_whenNameIsEmpty() {
@@ -102,14 +108,14 @@ final class LoginViewModelTests: XCTestCase {
 
     func test_locationUpdates() {
         let mockLocation = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
-        
+
         getLocationUpdatesMock.given(.execute(willReturn: Just(mockLocation).eraseToAnyPublisher()))
-        
+
         viewModel.getCurrentLocation()
 
         XCTAssertEqual(viewModel.location?.latitude, mockLocation.latitude)
         XCTAssertEqual(viewModel.location?.longitude, mockLocation.longitude)
-        
+
         getLocationUpdatesMock.verify(.execute(), count: .once)
     }
 
@@ -120,13 +126,19 @@ final class LoginViewModelTests: XCTestCase {
         viewModel.role = .customer
         viewModel.isTermChecked = true
 
-        let expectedUser = User(type: .customer, name: "Customer", location: GeoPoint(latitude: 0, longitude: 0), lastActive: Timestamp(), isActive: true)
-       
-        Given(createCustomerUserMock, .execute(user: .matching { $0.name == expectedUser.name }, willReturn: failed(FirestoreError.documentExists).eraseToAnyPublisher()))
+        let expectedUser = DummyBuilder.createUser(type: .customer, name: "Customer")
+
+        Given(
+            createCustomerUserMock,
+                .execute(
+                    user: .matching { $0.name == expectedUser.name },
+                    willReturn:
+                        failed(FirestoreError.documentExists).eraseToAnyPublisher()
+                )
+        )
 
         viewModel.doCreateUser()
 
-        // Verify that createCustomerUser.execute was called with the expected user
         createCustomerUserMock.verify(.execute(user: .matching { $0.name == expectedUser.name }), count: .once)
         createSellerUserMock.verify(.execute(user: .any), count: .never)
     }
@@ -137,9 +149,22 @@ final class LoginViewModelTests: XCTestCase {
         viewModel.role = .seller
         viewModel.isTermChecked = true
 
-        let expectedUser = User(type: .seller, name: "Seller", location: GeoPoint(latitude: 0, longitude: 0), lastActive: Timestamp(), isActive: true)
+        let expectedUser = User(
+            type: .seller,
+            name: "Seller",
+            location: GeoPoint(latitude: 0, longitude: 0),
+            lastActive: Timestamp(),
+            isActive: true)
 
-        createSellerUserMock.given(.execute(user: .matching { $0.name == expectedUser.name }, willReturn: Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()))
+        createSellerUserMock.given(
+            .execute(
+                user: .matching { $0.name == expectedUser.name },
+                willReturn:
+                    Just(())
+                    .setFailureType(to: FirestoreError.self)
+                    .eraseToAnyPublisher()
+            )
+        )
 
         viewModel.doCreateUser()
 
