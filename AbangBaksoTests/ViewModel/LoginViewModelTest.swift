@@ -16,6 +16,7 @@ final class LoginViewModelTests: XCTestCase {
     private var createCustomerUserMock: CreateUserMock!
     private var createSellerUserMock: CreateUserMock!
     private var getLocationUpdatesMock: GetLocationUpdatesMock!
+    private var getCurrentUserMock: GetCurrentUserMock!
     private var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
@@ -23,8 +24,13 @@ final class LoginViewModelTests: XCTestCase {
         createCustomerUserMock = CreateUserMock()
         createSellerUserMock = CreateUserMock()
         getLocationUpdatesMock = GetLocationUpdatesMock()
+        getCurrentUserMock = GetCurrentUserMock()
 
-        viewModel = LoginViewModel(createCustomerUserMock, createSellerUserMock, getLocationUpdatesMock)
+        viewModel = LoginViewModel(
+            createCustomerUserMock,
+            createSellerUserMock,
+            getLocationUpdatesMock,
+            getCurrentUserMock)
         cancellables = []
     }
 
@@ -34,6 +40,7 @@ final class LoginViewModelTests: XCTestCase {
         createSellerUserMock = nil
         getLocationUpdatesMock = nil
         cancellables = nil
+        getCurrentUserMock = nil
         super.tearDown()
     }
 
@@ -119,7 +126,7 @@ final class LoginViewModelTests: XCTestCase {
         viewModel.role = .customer
         viewModel.isTermChecked = true
 
-        let expectedUser = DummyBuilder.createUser(type: .customer)
+        let expectedUser = DummyBuilder.createUser(type: .customer, name: "Customer")
 
         Given(
             createCustomerUserMock,

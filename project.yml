@@ -27,7 +27,7 @@ targets:
       ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS: YES
       ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
     preBuildScripts:
-      - script: "\"${PODS_ROOT}/SwiftLint/swiftlint"\"
+      - script: "\"${PODS_ROOT}/SwiftLint/swiftlint\""
         name: SwiftLint
       - script: |
                 ./Pods/SwiftyMocky/bin/swiftymocky generate

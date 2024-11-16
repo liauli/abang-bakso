@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-protocol GetCurrentUser {
+protocol GetCurrentUser: AutoMockable {
     func execute() -> AnyPublisher<User?, FirestoreError>
 }
 
