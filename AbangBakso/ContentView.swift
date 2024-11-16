@@ -10,7 +10,7 @@ import SwiftData
 
 struct ContentView: View {
     @StateObject var loginVM = ViewModelProvider.shared.createLoginViewModel()
-    
+
     var body: some View {
         if loginVM.isLoggedIn {
             if let user = loginVM.user {

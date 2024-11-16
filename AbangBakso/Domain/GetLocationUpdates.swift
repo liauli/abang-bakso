@@ -16,14 +16,14 @@ protocol GetLocationUpdates: AutoMockable {
 
 class GetLocationUpdatesImpl: GetLocationUpdates {
     private let repository: LocationRepository
-    
+
     init(_ locationRepository: LocationRepository) {
         self.repository = locationRepository
     }
     func execute() -> AnyPublisher<CLLocationCoordinate2D, Never> {
         return repository.getLocationUpdates()
     }
-    
+
     func stop() {
         repository.stopUpdate()
     }

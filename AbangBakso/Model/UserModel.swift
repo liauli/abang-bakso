@@ -11,19 +11,19 @@ import CoreLocation
 
 struct User: Codable, Equatable, Identifiable {
     var id: String
-    
+
     let type: Collection
-    
+
     // MARK: from Firestore
     let name: String
     var location: GeoPoint
     var lastActive: Timestamp
     var isActive: Bool
-    
+
     var coordinate: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
     }
-    
+
     var dictionary: [String: Any] {
       return [
         "name": name,
@@ -32,7 +32,7 @@ struct User: Codable, Equatable, Identifiable {
         "isActive": isActive
       ]
     }
-    
+
     init(type: Collection, _ dict: [String: Any]) {
         name = dict["name"] as? String ?? ""
         id = name
@@ -41,7 +41,7 @@ struct User: Codable, Equatable, Identifiable {
         lastActive = dict["lastActive"] as? Timestamp ?? Timestamp(date: Date())
         isActive = dict["isActive"] as? Bool ?? false
     }
-    
+
     init(
         type: Collection,
         name: String,

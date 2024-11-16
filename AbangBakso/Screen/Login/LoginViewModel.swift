@@ -12,22 +12,22 @@ import CoreLocation
 
 class LoginViewModel: ObservableObject {
     @Published var name: String = ""
-    @Published var role: Collection? = nil
+    @Published var role: Collection?
     @Published var isTermChecked: Bool = false
-    
-    @Published var user: User? = nil
-    
+
+    @Published var user: User?
+
     @Published private(set) var isButtonEnabled: Bool = false
     @Published private(set) var isLoggedIn: Bool = false
-    
-    private(set) var location: CLLocationCoordinate2D? = nil
-    
+
+    private(set) var location: CLLocationCoordinate2D?
+
     private let createCustomerUser: CreateUser
     private let createSellerUser: CreateUser
     private let getLocationUpdates: GetLocationUpdates
     private let getCurrentUser: GetCurrentUser
     private var cancelables = Set<AnyCancellable>()
-    
+
     init(_ createCustomerUser: CreateUser,
          _ createSellerUser: CreateUser,
          _ getLocationUpdates: GetLocationUpdates,
@@ -53,12 +53,12 @@ extension LoginViewModel {
         }
         .store(in: &cancelables)
     }
-    
+
     func doCreateUser() {
         if isTermChecked, let role = role {
             let user = createUserPayload(for: role)
             var domain: CreateUser = createSellerUser
-            
+
             if user.type == .customer {
                 domain = createCustomerUser
             }
@@ -66,7 +66,7 @@ extension LoginViewModel {
             domain.execute(user: user)
                 .subscribe(on: Scheduler.background)
                 .receive(on: RunLoop.main)
-                .sink(receiveCompletion: { comp in
+                .sink(receiveCompletion: { _ in
                     // no op handle error
                 }, receiveValue: { [weak self] _ in
                     self?.isLoggedIn = true
@@ -74,7 +74,7 @@ extension LoginViewModel {
                 .store(in: &cancelables)
         }
     }
-    
+
     func destroySession() {
         user = nil
         isLoggedIn = false
@@ -107,7 +107,7 @@ extension LoginViewModel {
             isActive: true
         )
     }
-    
+
     private func checkButtonEnabled(
         changeName: Bool = false,
         newName: String? = nil,
@@ -119,19 +119,19 @@ extension LoginViewModel {
         let nameNotEmpty = changeName ? newName?.isEmpty == false : name.isEmpty == false
         let roleSelected = changeRole ? newRole != nil : role != nil
         let isTermDoneChecked = changeTerm ? isTerm == true : isTermChecked
-        
+
         isButtonEnabled = nameNotEmpty && roleSelected && isTermDoneChecked
     }
-    
+
     private func observeChangesToUpdateButtonState() {
         $name.sink { [weak self] name in
             self?.checkButtonEnabled(changeName: true, newName: name)
         }.store(in: &cancelables)
-        
+
         $role.sink { [weak self] role in
             self?.checkButtonEnabled(changeRole: true, newRole: role)
         }.store(in: &cancelables)
-        
+
         $isTermChecked.sink { [weak self] isTerm in
             self?.checkButtonEnabled(changeTerm: true, isTerm: isTerm)
         }

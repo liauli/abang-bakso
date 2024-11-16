@@ -19,7 +19,7 @@ class DeleteUserTests: XCTestCase {
     override func setUp() {
         super.setUp()
         userRepositoryMock = UserRepositoryMock()
-        sut = DeleteUserImpl(userRepositoryMock) 
+        sut = DeleteUserImpl(userRepositoryMock)
         cancellables = []
     }
 
@@ -34,7 +34,7 @@ class DeleteUserTests: XCTestCase {
         let mockUser = User(type: .customer, ["name": "John Doe"])
 
         Given(userRepositoryMock, .delete(user: .value(mockUser), willReturn: success(())))
-      
+
         var resultError: FirestoreError?
         sut.execute(user: mockUser)
             .sink(receiveCompletion: { completion in
@@ -54,9 +54,9 @@ class DeleteUserTests: XCTestCase {
 
         let expectedError = FirestoreError.failedToDeleteUser(NSError(domain: "", code: 0))
         Given(userRepositoryMock, .delete(user: .value(mockUser), willReturn: failed(expectedError)))
-      
+
         let expectation = XCTestExpectation(description: "Should fail")
-        
+
         sut.execute(user: mockUser)
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {

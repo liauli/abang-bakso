@@ -21,44 +21,44 @@ protocol UserRepository: AutoMockable {
 class UserRepositoryImpl: UserRepository {
     private let service: FirestoreService
     private let keychain: KeychainFacade
-    
+
     init(_ service: FirestoreService,
          _ keychain: KeychainFacade
     ) {
         self.service = service
         self.keychain = keychain
     }
-    
+
     func update(user: User) -> AnyPublisher<Void, FirestoreError> {
         return service.update(id: user.name, user.dictionary)
     }
-    
+
     func create(user: User) -> AnyPublisher<Void, FirestoreError> {
-        service.create(id: user.name, user.dictionary).flatMap { [weak self] void -> AnyPublisher<Void, FirestoreError> in
+        service.create(id: user.name, user.dictionary).flatMap { [weak self] _ -> AnyPublisher<Void, FirestoreError> in
             guard let self = self else {
                 return Fail(error: FirestoreError.failedToSaveUser).eraseToAnyPublisher()
             }
-            
+
             return self.saveUser(user: user)
         }
         .eraseToAnyPublisher()
     }
-    
+
     private func saveUser(user: User) -> AnyPublisher<Void, FirestoreError> {
         do {
             let data = try JSONEncoder().encode(user)
             try keychain.set(data: data, forKey: KeychainKeys.user.rawValue)
-            
+
             return Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
         } catch {
             return Fail(error: FirestoreError.failedToSaveUser).eraseToAnyPublisher()
         }
     }
-    
+
     private func removeUser() -> AnyPublisher<Void, FirestoreError> {
         do {
             try keychain.remove(forKey: KeychainKeys.user.rawValue)
-            
+
             return Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
         } catch {
             return Fail(error: FirestoreError.failedToDeleteUser(error)).eraseToAnyPublisher()
@@ -67,8 +67,8 @@ class UserRepositoryImpl: UserRepository {
     func stopObserving() {
         return service.stopObserving()
     }
-    
-    func startObserveUser() -> AnyPublisher<[User], Never>{
+
+    func startObserveUser() -> AnyPublisher<[User], Never> {
         return service.startObserving()
             .map { documents -> [User] in
                 return documents.map { document in
@@ -77,7 +77,7 @@ class UserRepositoryImpl: UserRepository {
             }
             .eraseToAnyPublisher()
     }
-    
+
     func delete(user: User) -> AnyPublisher<Void, FirestoreError> {
         return service.delete(id: user.id).flatMap(removeUser).eraseToAnyPublisher()
     }

@@ -7,12 +7,10 @@
 
 import SwiftUI
 
-
 struct ConfirmationDialog: View {
     @Binding var isShowing: Bool
-    
-    var confirmAction: () -> () = {}
-    
+    var confirmAction: () -> Void = {}
+
     var body: some View {
         if isShowing {
             ZStack(alignment: .bottom) {
@@ -29,7 +27,7 @@ struct ConfirmationDialog: View {
                         .frame(width: 100, height: 100)
                         .padding(.top, 30)
                         .padding(.bottom, 20)
-                    
+
                     // Message Text
                     Text("Dengan menutup halaman ini, kamu akan keluar dari pantauan Tukang Bakso")
                         .fontBody1()
@@ -37,8 +35,7 @@ struct ConfirmationDialog: View {
                         .multilineTextAlignment(.center)
                         .padding([.leading, .trailing], 24)
                         .padding(.bottom, 20)
-                        
-                    
+
                     Button(action: confirmAction) {
                         Text("OK")
                             .frame(maxWidth: .infinity)
@@ -50,26 +47,24 @@ struct ConfirmationDialog: View {
                     }
                     .padding([.leading, .trailing], 20)
                     .padding(.bottom, 8)
-                    
+
                     Button(action: {
-                        // Handle Cancel action
-                        
                         isShowing = false
-                    }) {
+                    }, label: {
                         Text("Batal")
                             .frame(maxWidth: .infinity)
                             .padding()
                             .foregroundColor(.red)
                             .fontPoppins13()
                             .background(RoundedRectangle(cornerRadius: 20).fill(.white).stroke(.tselRed))
-                    }
+                    })
                     .padding([.leading, .trailing], 20)
                     .padding(.bottom, 24)
                 }
                 .frame(maxWidth: .infinity, maxHeight: 400)
                 .background(Color.white)
                 .cornerRadius(20)
-                
+
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .ignoresSafeArea()

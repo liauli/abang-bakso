@@ -11,9 +11,9 @@ class ViewModelProvider {
     static let shared = ViewModelProvider()
     private let domain = DomainProvider.shared
     private init() {
-        
+
     }
-    
+
     func createLoginViewModel() -> LoginViewModel {
         return LoginViewModel(
             domain.createCreateUser(type: .customer),
@@ -22,7 +22,7 @@ class ViewModelProvider {
             domain.createGetCurrentUser(type: .customer)
         )
     }
-    
+
     private func createMapViewModelForSeller() -> MapViewModel {
         return MapViewModel(
             domain.createObserveUser(type: .customer),
@@ -31,7 +31,7 @@ class ViewModelProvider {
             domain.createGetLocationUpdates()
         )
     }
-    
+
     private func createMapViewModelForCustomer() -> MapViewModel {
         return MapViewModel(
             domain.createObserveUser(type: .seller),
@@ -39,7 +39,7 @@ class ViewModelProvider {
             domain.createDeleteUser(type: .customer)
         )
     }
-    
+
     func createMapViewModel(for type: Collection) -> MapViewModel {
         switch type {
         case .customer:
@@ -53,26 +53,26 @@ class ViewModelProvider {
 class DomainProvider {
     static let shared = DomainProvider()
     private let repositoryProvider = RepositoryProvider.shared
-    
+
     private init() {
-        
+
     }
     func createGetLocationUpdates() -> GetLocationUpdates {
         return GetLocationUpdatesImpl(repositoryProvider.createLocationRepository())
     }
-    
+
     func createCreateUser(type: Collection) -> CreateUser {
         return CreateUserImpl(repositoryProvider.createUserRepository(type: type))
     }
-    
+
     func createObserveUser(type: Collection) -> ObserveUser {
         return ObserveUserImpl(repositoryProvider.createUserRepository(type: type))
     }
-    
+
     func createUpdateUser(type: Collection) -> UpdateUser {
         return UpdateUserImpl(repositoryProvider.createUserRepository(type: type))
     }
-    
+
     func createDeleteUser(type: Collection) -> DeleteUser {
         return DeleteUserImpl(
             repositoryProvider.createUserRepository(type: type)
@@ -86,14 +86,13 @@ class DomainProvider {
     }
 }
 
-
 class RepositoryProvider {
     static let shared = RepositoryProvider()
     private let serviceProvider = ServiceProvider.shared
     private init() {
-        
+
     }
-    
+
     func createLocationRepository() -> LocationRepository {
         return LocationRepositoryImpl()
     }
@@ -105,18 +104,17 @@ class RepositoryProvider {
     }
 }
 
-
 class ServiceProvider {
     static let shared = ServiceProvider()
-    
+
     private init() {
-        
+
     }
-    
+
     func createFirestoreService(type: Collection) -> FirestoreService {
         return FirestoreServiceImpl(type)
     }
-    
+
     func createKeychainFacade() -> KeychainFacade {
         return KeychainFacadeImpl()
     }
