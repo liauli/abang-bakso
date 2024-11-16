@@ -16,6 +16,8 @@ jobs:
           bundler-cache: true
       - name: Install Danger
         run: brew install danger/tap/danger-swift
+      - name: Install Swiftlint
+        run: brew install swiftlint
       - name: run danger
         run: danger-swift ci
         env:
