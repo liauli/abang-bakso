@@ -18,33 +18,7 @@ jobs:
       - name: Install SwiftLint
         run: brew install swiftlint
 
-      # Step 3: Run SwiftLint on modified files and capture output
-      - name: Run SwiftLint on modified files
-        id: swiftlint
+      - name: Lint
         run: |
-          # Find modified Swift files and lint each one
-          BRANCH_NAME=${GITHUB_REF##*/}
-	  git fetch origin main
-          LINT_RESULT=$(git diff "$BRANCH_NAME" main --name-only | grep "\.swift$" | while read filename; do
-              swiftlint lint --path "$filename"
-          done)
-          
-          echo "$LINT_RESULT"
-          echo "lint_result=$LINT_RESULT" >> $GITHUB_ENV
-
-      # Step 4: Post SwiftLint results as a PR comment
-      - name: Post SwiftLint results to PR
-        if: ${{ env.lint_result != '' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LINT_RESULT: ${{ env.lint_result }}
-        run: |
-          # Prepare the comment body
-          COMMENT_BODY="**SwiftLint Results** for PR #${{ github.event.pull_request.number }}:\n\n\`\`\`\n$LINT_RESULT\n\`\`\`"
-
-          # Post the comment to the PR
-          curl -s -X POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -d "{\"body\": \"$COMMENT_BODY\"}" \
-            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+          set -o pipefail
+          swiftlint lint --strict --quiet | sed -E 's/^(.*):([0-9]+):([0-9]+): (warning|error|[^:]+): (.*)/::\4 title=Lint error,file=\1,line=\2,col=\3::\5\n\1:\2:\3/'
