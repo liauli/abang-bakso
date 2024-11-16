@@ -3,7 +3,7 @@ name: run-tests
 on: [push]
 
 jobs:
-  test:
+  setup:
     runs-on: macos-latest
     steps:
       - name: Checkout code
@@ -14,33 +14,51 @@ jobs:
         with:
           ruby-version: '3.0' 
           bundler-cache: true
-
       - name: Install dependencies
         run: bundle install
+      - name: Cache Build
+        id: cache-build
+        uses: actions/cache/save@v3
+        with:
+          path: ./
+          key: ${{ github.sha }}-setup
 
+  test:
+    needs: setup  
+    runs-on: macos-latest
+    steps:
+      - uses: actions/cache/restore@v3
+        id: restore-build
+        with:
+          path: ./
+          key: ${{ github.sha }}-setup
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0' 
+          bundler-cache: true
       - name: Install XcodeGen
         run: brew install xcodegen
-
       - name: Generate Xcode project
         run: xcodegen generate
-
-
-
       - name: Run Fastlane tests
         run: bundle exec fastlane unit_tests
 
   lint:
+    needs: setup 
     runs-on: macos-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/cache/restore@v3
+        id: restore-build
+        with:
+          path: ./
+          key: ${{ github.sha }}-setup
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.0' 
           bundler-cache: true
-      - name: Install dependencies
-        run: bundle install
+      - name: Install swiftlint
+        run: brew install swiftlint
       - name: Run Fastlane lint
         run: bundle exec fastlane lint
-      
