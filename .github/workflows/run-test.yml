@@ -1,6 +1,9 @@
-name: run-tests
+name: iOS CI Pipeline
 
-on: [push]
+on:
+  push:
+    branches:
+      - '*'  # This will trigger the workflow on any branch
 
 jobs:
   test:
@@ -26,3 +29,51 @@ jobs:
 
       - name: Run Fastlane tests
         run: bundle exec fastlane unit_tests
+
+  secret_scan:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Install git-secrets
+        run: brew install git-secrets
+      - name: Run Secret Scan
+        run: git secrets --scan
+
+  security:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/cocoapods@master
+      	env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+     	with:
+          args: --severity-threshold=high
+
+  build_and_archive:
+    runs-on: macos-latest
+    needs: [test, security, secret_scan]  # Ensures all previous jobs succeed
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Set up CocoaPods
+        run: |
+          gem install cocoapods
+          pod install
+      - name: Install Fastlane
+        run: brew install fastlane
+      - name: Install Xcodegen
+        run: brew install xcodegen
+      - name: Generate Xcode project with Xcodegen
+        run: xcodegen generate
+      - name: Build and Archive
+        run: fastlane gym --scheme "AbangBakso" --workspace "AbangBakso.xcworkspace" --output_directory "build" --output_name "AbangBakso.ipa"
+      
+      # Upload the IPA as an artifact
+      - name: Upload .ipa as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: abang-bakso-ipa
+          path: build/AbangBakso.ipa  # Path to your generated .ipa file
