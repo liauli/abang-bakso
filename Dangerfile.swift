@@ -1,6 +1,5 @@
 import Danger
 import Foundation
-import DangerSwiftLint // package: https://github.com/ashfurrow/danger-swiftlint.git
 
 let danger = Danger()
 let editedFiles = danger.git.modifiedFiles + danger.git.createdFiles
@@ -25,4 +24,4 @@ if danger.github != nil {
 }
 
 print("Running Swiftlint on changed files...")
-SwiftLint.lint(.files(editedFiles), inline: false, configFile: ".swiftlint.yml", strict: true, quiet: false)
+SwiftLint.lint(.files(editedFiles), configFile: ".swiftlint.yml", strict: true, quiet: false)
