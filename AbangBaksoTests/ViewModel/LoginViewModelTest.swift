@@ -128,14 +128,7 @@ final class LoginViewModelTests: XCTestCase {
 
         let expectedUser = DummyBuilder.createUser(type: .customer, name: "Customer")
 
-        Given(
-            createCustomerUserMock,
-                .execute(
-                    user: .matching { $0.name == expectedUser.name },
-                    willReturn:
-                        failed(FirestoreError.documentExists).eraseToAnyPublisher()
-                )
-        )
+        Given(createCustomerUserMock,.execute(user: .matching { $0.name == expectedUser.name }, willReturn: failed(FirestoreError.documentExists).eraseToAnyPublisher() ))
 
         viewModel.doCreateUser()
 

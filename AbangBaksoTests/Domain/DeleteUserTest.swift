@@ -57,11 +57,12 @@ class DeleteUserTests: XCTestCase {
 
         let expectation = XCTestExpectation(description: "Should fail")
 
+        
         sut.execute(user: mockUser)
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
                     var isErrorEqual = false
-                    if case .failedToDeleteUser = error {
+                    if case .failedToDeleteUser(_) = error {
                         isErrorEqual = true
                     }
                     XCTAssertTrue(isErrorEqual)
