@@ -20,6 +20,7 @@ struct RoundedTextField: View {
                 .fill(.white)
                 .stroke(.tselGrayBorder, lineWidth: 1.0)
             TextField(hint, text: $text)
+                .characterLimit($text, limit: 60)
                 .background(.white)
                 .frame(height: 48)
                 .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))

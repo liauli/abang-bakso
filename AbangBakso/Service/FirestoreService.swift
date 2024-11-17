@@ -25,6 +25,7 @@ class FirestoreServiceImpl: FirestoreService {
         self.collection = collection
         ref = Firestore.firestore().collection(collection.rawValue)
     }
+    
     func create(id: String, _ data: [String: Any]) -> AnyPublisher<Void, FirestoreError> {
         return ref.setDocumentIfNotExists(for: id, data: data)
     }

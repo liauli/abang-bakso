@@ -47,20 +47,24 @@ struct MapView: View {
             mapVM.setOnline(false)
         }
         .onChange(of: scenePhase, { _, newValue in
-            switch newValue {
-            case .active:
-                mapVM.setOnline(true)
-            case .background:
-                mapVM.setOnline(false)
-            default:
-                print("no action for \(newValue)")
-            }
+            handleScenePhase(newValue)
         })
         .onChange(of: mapVM.user, { oldValue, newValue in
             if oldValue != nil && newValue == nil {
                 loginVM.destroySession()
             }
         })
+    }
+    
+    private func handleScenePhase(_ scenePhase: ScenePhase) {
+        switch scenePhase {
+        case .active:
+            mapVM.setOnline(true)
+        case .background:
+            mapVM.setOnline(false)
+        default:
+            print("no action for \(scenePhase)")
+        }
     }
 
     private var mapView: some View {
