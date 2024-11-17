@@ -31,7 +31,7 @@ struct SelectableMenuView: View {
                     })
                 }
             } label: {
-                Text(selectedOption != nil ? selectedOption?.rawValue ?? "" : placeholder)
+                Text(selectedOption != nil ? selectedOption?.getDisplayName() ?? "" : placeholder)
                     .foregroundColor(selectedOption == nil ? hintColor : selectedColor) // Use hintColor for unselected
                     .padding(.vertical)
                     .padding(.leading, 8)
