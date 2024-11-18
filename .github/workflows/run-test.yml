@@ -40,6 +40,8 @@ jobs:
         with:
           ruby-version: '3.0' 
           bundler-cache: true
+      - name: Install dependencies
+        run: bundle install
       - name: Run Fastlane tests
         run: bundle exec fastlane unit_tests
 
@@ -57,6 +59,8 @@ jobs:
         with:
           ruby-version: '3.0' 
           bundler-cache: true
+      - name: Install dependencies
+        run: bundle install
       - name: Run Fastlane tests
         run: bundle exec fastlane gym
 
