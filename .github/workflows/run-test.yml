@@ -40,8 +40,6 @@ jobs:
         with:
           ruby-version: '3.0' 
           bundler-cache: true
-      - name: Generate Xcode project
-        run: xcodegen generate
       - name: Run Fastlane tests
         run: bundle exec fastlane unit_tests
 
@@ -59,8 +57,6 @@ jobs:
         with:
           ruby-version: '3.0' 
           bundler-cache: true
-      - name: Generate Xcode project
-        run: xcodegen generate
       - name: Run Fastlane tests
         run: bundle exec fastlane gym
 
