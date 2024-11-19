@@ -19,6 +19,8 @@ jobs:
         run: bundle install
       - name: Install XcodeGen
         run: brew install xcodegen
+      - name: Run Fastlane tests
+        run: bundle exec fastlane gym
       - name: Cache Build
         id: cache-build
         uses: actions/cache/save@v3
