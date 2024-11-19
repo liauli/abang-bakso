@@ -22,7 +22,7 @@ platform :ios do
     swiftlint(config_file: ".swiftlint.yml")
   end
 
-  lane :gym do
+  lane :build_my_ipa do
     gym(scheme: "AbangBakso")
   end
 

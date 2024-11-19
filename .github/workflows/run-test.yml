@@ -42,7 +42,7 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
       - name: Run Fastlane tests
-        run: bundle exec fastlane gym
+        run: bundle exec fastlane build_my_ipa
 
   lint:
     needs: setup 
