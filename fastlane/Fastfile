@@ -22,6 +22,10 @@ platform :ios do
     swiftlint(config_file: ".swiftlint.yml")
   end
 
+  lane :gym do
+    gym(scheme: "AbangBakso")
+  end
+
   lane :unit_tests do
     
     run_tests(
