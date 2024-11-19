@@ -17,7 +17,7 @@ struct User: Codable, Equatable, Identifiable {
     // MARK: from Firestore
     let name: String
     var location: GeoPoint
-    var lastActive: Timestamp
+    var lastActive: Date
     var isActive: Bool
 
     var coordinate: CLLocationCoordinate2D {
@@ -27,18 +27,33 @@ struct User: Codable, Equatable, Identifiable {
     var dictionary: [String: Any] {
       return [
         "name": name,
-        "location": location,
-        "lastActive": lastActive,
+        "location": [
+            "latitude": location.latitude,
+            "longitude": location.longitude
+        ],
+        "lastActive": lastActive.timeIntervalSince1970,
         "isActive": isActive
       ]
     }
 
     init(type: Collection, _ dict: [String: Any]) {
+        
         name = dict["name"] as? String ?? ""
         id = name
         self.type = type
-        location = dict["location"] as? GeoPoint ?? GeoPoint(latitude: 0, longitude: 0)
-        lastActive = dict["lastActive"] as? Timestamp ?? Timestamp(date: Date())
+        
+        let locationData = dict["location"] as? [String: Double] ?? [:]
+        location = GeoPoint(
+            latitude: locationData["latitude"] ?? 0,
+            longitude: locationData["longitude"] ?? 0
+        )
+        
+        if let timeInSec = dict["lastActive"] as? Int64 {
+            lastActive = Date(timeIntervalSince1970: TimeInterval(timeInSec))
+        } else {
+            lastActive = Date()
+        }
+        
         isActive = dict["isActive"] as? Bool ?? false
     }
 
@@ -46,7 +61,7 @@ struct User: Codable, Equatable, Identifiable {
         type: Collection,
         name: String,
         location: GeoPoint,
-        lastActive: Timestamp,
+        lastActive: Date,
         isActive: Bool
     ) {
         self.type = type

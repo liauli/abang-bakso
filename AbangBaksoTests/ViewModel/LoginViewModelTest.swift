@@ -153,7 +153,7 @@ final class LoginViewModelTests: XCTestCase {
             type: .seller,
             name: "Seller",
             location: GeoPoint(latitude: 0, longitude: 0),
-            lastActive: Timestamp(),
+            lastActive: Date(),
             isActive: true)
 
         createSellerUserMock.given(

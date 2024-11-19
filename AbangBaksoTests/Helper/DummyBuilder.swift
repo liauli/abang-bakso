@@ -16,7 +16,7 @@ enum DummyBuilder {
             type: type,
             name: name,
             location: GeoPoint(latitude: 0.0, longitude: 0.0),
-            lastActive: Timestamp(),
+            lastActive: Date(),
             isActive: false
         )
     }

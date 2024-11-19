@@ -9,6 +9,7 @@ target 'AbangBakso' do
   pod 'FirebaseFirestore'
   pod 'FirebaseAnalytics'
   pod 'FirebaseCrashlytics'
+  pod 'FirebaseDatabase'
   pod 'SwiftLint'
   
   target 'AbangBaksoTests' do
