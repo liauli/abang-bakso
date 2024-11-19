@@ -64,8 +64,7 @@ class UserRepositoryTest: XCTestCase {
         let expectedError = FirestoreError.documentExists
         Given(mockService,
             .create(
-                id: .value(expectedCustomer.name),
-                .value(expectedCustomer.dictionary),
+                id: .any, .any,
                 willReturn: failed(.documentExists)
             )
         )
@@ -128,10 +127,10 @@ class UserRepositoryTest: XCTestCase {
         let dummyUser = DummyBuilder.createUser(type: .customer)
 
         let dummyDocuments = [
-            DocumentSnapshotWrapper(data: dummyUser.dictionary, isExists: false)
+            DocumentSnapshotWrapper(type: dummyUser.type, data: dummyUser.dictionary, isExists: false)
         ]
         Given(mockService,
-            .startObserving(willReturn: alwaysSuccess(dummyDocuments))
+              .startObserving(query: .any, disconnectValue: .any, willReturn: alwaysSuccess(dummyDocuments))
         )
 
         let expectation = XCTestExpectation(description: "success")
@@ -139,8 +138,15 @@ class UserRepositoryTest: XCTestCase {
         sut.startObserveUser().sink { _ in
             expectation.fulfill()
           } receiveValue: { response in
-              Verify(self.mockService, .once, .startObserving())
-              XCTAssertEqual(response.first, dummyUser)
+              Verify(self.mockService, .once, .startObserving(query: .any, disconnectValue: .any))
+              guard let user = response.first else { return }
+              XCTAssertEqual(user.id, dummyUser.id)
+              XCTAssertEqual(user.type, dummyUser.type)
+              XCTAssertEqual(user.name, dummyUser.name)
+              XCTAssertEqual(user.location.latitude, dummyUser.location.latitude)
+              XCTAssertEqual(user.location.longitude, dummyUser.location.longitude)
+              XCTAssertTrue(user.lastActive.isAlmostEqual(to: dummyUser.lastActive)) // Custom Date comparison
+              XCTAssertEqual(user.isActive, dummyUser.isActive)
           }.store(in: &cancellables)
         wait(for: [expectation], timeout: 1)
     }

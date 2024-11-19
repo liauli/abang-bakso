@@ -46,6 +46,7 @@ extension MapViewModel {
         observeUser.execute().sink { _ in
             // comp
         } receiveValue: { users in
+            print("=== update users \(users)")
             self.customers = users
         }.store(in: &cancellabels)
     }
@@ -94,8 +95,9 @@ extension MapViewModel {
     func destroySession() {
         if let user = user {
             deleteUser
-                .execute(user: user).sink { _ in
+                .execute(user: user).sink { [weak self] _ in
                     // comp
+                    self?.user = nil
                 } receiveValue: { [weak self] _ in
                     self?.user = nil
                 }.store(in: &cancellabels)

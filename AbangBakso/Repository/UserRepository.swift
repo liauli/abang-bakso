@@ -54,32 +54,32 @@ class UserRepositoryImpl: UserRepository {
             return Fail(error: FirestoreError.failedToSaveUser).eraseToAnyPublisher()
         }
     }
-
-    private func removeUser() -> AnyPublisher<Void, FirestoreError> {
-        do {
-            try keychain.remove(forKey: KeychainKeys.user.rawValue)
-
-            return Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
-        } catch {
-            return Fail(error: FirestoreError.failedToDeleteUser(error)).eraseToAnyPublisher()
-        }
-    }
+    
     func stopObserving() {
         return service.stopObserving()
     }
 
     func startObserveUser() -> AnyPublisher<[User], Never> {
-        return service.startObserving()
+        var query = ("isActive", true)
+        return service.startObserving(query: query, disconnectValue: [:])
             .map { documents -> [User] in
                 return documents.map { document in
-                    User(type: .customer, document.data)
+                    User(type: document.type ?? .customer, document.data)
                 }
             }
             .eraseToAnyPublisher()
     }
 
     func delete(user: User) -> AnyPublisher<Void, FirestoreError> {
-        return service.delete(id: user.id).flatMap(removeUser).eraseToAnyPublisher()
+        return service.delete(id: user.id).flatMap({ [weak self] _ -> AnyPublisher<Void, FirestoreError> in
+            do {
+                try self?.keychain.remove(forKey: KeychainKeys.user.rawValue)
+                return Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
+            } catch {
+                return Fail(error: FirestoreError.failedToDeleteUser(error)).eraseToAnyPublisher()
+            }
+        }).eraseToAnyPublisher()
+            
     }
     
     func getLocal() -> AnyPublisher<User?, FirestoreError> {
