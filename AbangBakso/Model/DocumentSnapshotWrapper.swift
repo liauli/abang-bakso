@@ -8,6 +8,7 @@
 import Foundation
 
 struct DocumentSnapshotWrapper {
+    let type: Collection?
     let data: [String: Any]
     let isExists: Bool
 }

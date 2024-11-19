@@ -103,7 +103,7 @@ extension LoginViewModel {
             type: role,
             name: name,
             location: GeoPoint(latitude: location?.latitude ?? 0, longitude: location?.longitude ?? 0),
-            lastActive: Timestamp(),
+            lastActive: Date(),
             isActive: true
         )
     }

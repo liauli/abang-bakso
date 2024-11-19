@@ -98,7 +98,7 @@ class RepositoryProvider {
     }
     func createUserRepository(type: Collection) -> UserRepository {
         return UserRepositoryImpl(
-            serviceProvider.createFirestoreService(type: type),
+            serviceProvider.createRealtimeDatabaseService(type: type.rawValue),
             serviceProvider.createKeychainFacade()
         )
     }
@@ -117,5 +117,9 @@ class ServiceProvider {
 
     func createKeychainFacade() -> KeychainFacade {
         return KeychainFacadeImpl()
+    }
+    
+    func createRealtimeDatabaseService(type: String) -> FirestoreService {
+        return RealtimeDatabaseServiceImpl(path: type)
     }
 }

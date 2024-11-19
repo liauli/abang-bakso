@@ -471,16 +471,16 @@ open class FirestoreServiceMock: FirestoreService, Mock {
 		return __value
     }
 
-    open func startObserving() -> AnyPublisher<[DocumentSnapshotWrapper], Never> {
-        addInvocation(.m_startObserving)
-		let perform = methodPerformValue(.m_startObserving) as? () -> Void
-		perform?()
+    open func startObserving(query: (String, Any)?, disconnectValue: [String: Any]) -> AnyPublisher<[DocumentSnapshotWrapper], Never> {
+        addInvocation(.m_startObserving__query_querydisconnectValue_disconnectValue(Parameter<(String, Any)?>.value(`query`), Parameter<[String: Any]>.value(`disconnectValue`)))
+		let perform = methodPerformValue(.m_startObserving__query_querydisconnectValue_disconnectValue(Parameter<(String, Any)?>.value(`query`), Parameter<[String: Any]>.value(`disconnectValue`))) as? ((String, Any)?, [String: Any]) -> Void
+		perform?(`query`, `disconnectValue`)
 		var __value: AnyPublisher<[DocumentSnapshotWrapper], Never>
 		do {
-		    __value = try methodReturnValue(.m_startObserving).casted()
+		    __value = try methodReturnValue(.m_startObserving__query_querydisconnectValue_disconnectValue(Parameter<(String, Any)?>.value(`query`), Parameter<[String: Any]>.value(`disconnectValue`))).casted()
 		} catch {
-			onFatalFailure("Stub return value not specified for startObserving(). Use given")
-			Failure("Stub return value not specified for startObserving(). Use given")
+			onFatalFailure("Stub return value not specified for startObserving(query: (String, Any)?, disconnectValue: [String: Any]). Use given")
+			Failure("Stub return value not specified for startObserving(query: (String, Any)?, disconnectValue: [String: Any]). Use given")
 		}
 		return __value
     }
@@ -509,7 +509,7 @@ open class FirestoreServiceMock: FirestoreService, Mock {
     fileprivate enum MethodType {
         case m_create__id_id_data(Parameter<String>, Parameter<[String: Any]>)
         case m_update__id_id_data(Parameter<String>, Parameter<[String: Any]>)
-        case m_startObserving
+        case m_startObserving__query_querydisconnectValue_disconnectValue(Parameter<(String, Any)?>, Parameter<[String: Any]>)
         case m_stopObserving
         case m_delete__id_id(Parameter<String>)
 
@@ -527,7 +527,11 @@ open class FirestoreServiceMock: FirestoreService, Mock {
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsData, rhs: rhsData, with: matcher), lhsData, rhsData, "_ data"))
 				return Matcher.ComparisonResult(results)
 
-            case (.m_startObserving, .m_startObserving): return .match
+            case (.m_startObserving__query_querydisconnectValue_disconnectValue(let lhsQuery, let lhsDisconnectvalue), .m_startObserving__query_querydisconnectValue_disconnectValue(let rhsQuery, let rhsDisconnectvalue)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsQuery, rhs: rhsQuery, with: matcher), lhsQuery, rhsQuery, "query"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsDisconnectvalue, rhs: rhsDisconnectvalue, with: matcher), lhsDisconnectvalue, rhsDisconnectvalue, "disconnectValue"))
+				return Matcher.ComparisonResult(results)
 
             case (.m_stopObserving, .m_stopObserving): return .match
 
@@ -543,7 +547,7 @@ open class FirestoreServiceMock: FirestoreService, Mock {
             switch self {
             case let .m_create__id_id_data(p0, p1): return p0.intValue + p1.intValue
             case let .m_update__id_id_data(p0, p1): return p0.intValue + p1.intValue
-            case .m_startObserving: return 0
+            case let .m_startObserving__query_querydisconnectValue_disconnectValue(p0, p1): return p0.intValue + p1.intValue
             case .m_stopObserving: return 0
             case let .m_delete__id_id(p0): return p0.intValue
             }
@@ -552,7 +556,7 @@ open class FirestoreServiceMock: FirestoreService, Mock {
             switch self {
             case .m_create__id_id_data: return ".create(id:_:)"
             case .m_update__id_id_data: return ".update(id:_:)"
-            case .m_startObserving: return ".startObserving()"
+            case .m_startObserving__query_querydisconnectValue_disconnectValue: return ".startObserving(query:disconnectValue:)"
             case .m_stopObserving: return ".stopObserving()"
             case .m_delete__id_id: return ".delete(id:)"
             }
@@ -574,8 +578,8 @@ open class FirestoreServiceMock: FirestoreService, Mock {
         public static func update(id: Parameter<String>, _ data: Parameter<[String: Any]>, willReturn: AnyPublisher<Void, FirestoreError>...) -> MethodStub {
             return Given(method: .m_update__id_id_data(`id`, `data`), products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
-        public static func startObserving(willReturn: AnyPublisher<[DocumentSnapshotWrapper], Never>...) -> MethodStub {
-            return Given(method: .m_startObserving, products: willReturn.map({ StubProduct.return($0 as Any) }))
+        public static func startObserving(query: Parameter<(String, Any)?>, disconnectValue: Parameter<[String: Any]>, willReturn: AnyPublisher<[DocumentSnapshotWrapper], Never>...) -> MethodStub {
+            return Given(method: .m_startObserving__query_querydisconnectValue_disconnectValue(`query`, `disconnectValue`), products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
         public static func delete(id: Parameter<String>, willReturn: AnyPublisher<Void, FirestoreError>...) -> MethodStub {
             return Given(method: .m_delete__id_id(`id`), products: willReturn.map({ StubProduct.return($0 as Any) }))
@@ -594,9 +598,9 @@ open class FirestoreServiceMock: FirestoreService, Mock {
 			willProduce(stubber)
 			return given
         }
-        public static func startObserving(willProduce: (Stubber<AnyPublisher<[DocumentSnapshotWrapper], Never>>) -> Void) -> MethodStub {
+        public static func startObserving(query: Parameter<(String, Any)?>, disconnectValue: Parameter<[String: Any]>, willProduce: (Stubber<AnyPublisher<[DocumentSnapshotWrapper], Never>>) -> Void) -> MethodStub {
             let willReturn: [AnyPublisher<[DocumentSnapshotWrapper], Never>] = []
-			let given: Given = { return Given(method: .m_startObserving, products: willReturn.map({ StubProduct.return($0 as Any) })) }()
+			let given: Given = { return Given(method: .m_startObserving__query_querydisconnectValue_disconnectValue(`query`, `disconnectValue`), products: willReturn.map({ StubProduct.return($0 as Any) })) }()
 			let stubber = given.stub(for: (AnyPublisher<[DocumentSnapshotWrapper], Never>).self)
 			willProduce(stubber)
 			return given
@@ -615,7 +619,7 @@ open class FirestoreServiceMock: FirestoreService, Mock {
 
         public static func create(id: Parameter<String>, _ data: Parameter<[String: Any]>) -> Verify { return Verify(method: .m_create__id_id_data(`id`, `data`))}
         public static func update(id: Parameter<String>, _ data: Parameter<[String: Any]>) -> Verify { return Verify(method: .m_update__id_id_data(`id`, `data`))}
-        public static func startObserving() -> Verify { return Verify(method: .m_startObserving)}
+        public static func startObserving(query: Parameter<(String, Any)?>, disconnectValue: Parameter<[String: Any]>) -> Verify { return Verify(method: .m_startObserving__query_querydisconnectValue_disconnectValue(`query`, `disconnectValue`))}
         public static func stopObserving() -> Verify { return Verify(method: .m_stopObserving)}
         public static func delete(id: Parameter<String>) -> Verify { return Verify(method: .m_delete__id_id(`id`))}
     }
@@ -630,8 +634,8 @@ open class FirestoreServiceMock: FirestoreService, Mock {
         public static func update(id: Parameter<String>, _ data: Parameter<[String: Any]>, perform: @escaping (String, [String: Any]) -> Void) -> Perform {
             return Perform(method: .m_update__id_id_data(`id`, `data`), performs: perform)
         }
-        public static func startObserving(perform: @escaping () -> Void) -> Perform {
-            return Perform(method: .m_startObserving, performs: perform)
+        public static func startObserving(query: Parameter<(String, Any)?>, disconnectValue: Parameter<[String: Any]>, perform: @escaping ((String, Any)?, [String: Any]) -> Void) -> Perform {
+            return Perform(method: .m_startObserving__query_querydisconnectValue_disconnectValue(`query`, `disconnectValue`), performs: perform)
         }
         public static func stopObserving(perform: @escaping () -> Void) -> Perform {
             return Perform(method: .m_stopObserving, performs: perform)

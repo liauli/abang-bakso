@@ -66,7 +66,7 @@ final class MapViewModelTests: XCTestCase {
             type: .seller,
             name: "Seller",
             location: initialLocation,
-            lastActive: Timestamp(),
+            lastActive: Date(),
             isActive: true)
 
         Given(observeLocationMock, .execute(willReturn: Just(newLocation).eraseToAnyPublisher()))
