@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LoginRoleSelection: View {
-    var menus: [String]
+    var menus: [Collection]
     @Binding var selectedMenu: Collection?
 
     var body: some View {

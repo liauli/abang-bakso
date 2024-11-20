@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LoginView: View {
-    let userTypes = Collection.allCases.map { $0.rawValue }
+    let userTypes = Collection.allCases
 
     @ObservedObject var loginVM: LoginViewModel
 
