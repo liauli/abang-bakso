@@ -11,7 +11,10 @@ import FirebaseFirestore
 protocol FirestoreService: AutoMockable {
     func create(id: String, _ data: [String: Any]) -> AnyPublisher<Void, FirestoreError>
     func update(id: String, _ data: [String: Any]) -> AnyPublisher<Void, FirestoreError>
-    func startObserving(query: (String, Any)?, disconnectValue: [String: Any]) -> AnyPublisher<[DocumentSnapshotWrapper], Never>
+    func startObserving(
+        query: (String, Any)?,
+        disconnectValue: [String: Any]
+    ) -> AnyPublisher<[DocumentSnapshotWrapper], Never>
     func stopObserving()
     func delete(id: String) -> AnyPublisher<Void, FirestoreError>
 }

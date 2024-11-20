@@ -33,4 +33,3 @@ extension View {
         self.font(.custom("Poppins-Regular", size: 13))
     }
 }
-
