@@ -23,6 +23,7 @@ platform :ios do
   end
 
   lane :build_my_ipa do
+    enable_automatic_code_signing
     gym(scheme: "AbangBakso")
   end
 
