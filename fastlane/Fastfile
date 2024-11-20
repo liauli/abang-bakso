@@ -28,8 +28,9 @@ platform :ios do
       workspace: "AbangBakso.xcworkspace",
       scheme: "AbangBakso",
       only_testing: ['AbangBaksoTests'],
-      output_types: 'xcresult',
-      output_directory: './test_output'
+      output_directory: './test_output',
+      result_bundle: true,
+      code_coverage: true
    )
   end
 end
