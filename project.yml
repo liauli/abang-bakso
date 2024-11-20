@@ -10,6 +10,7 @@ targets:
     info:
       path: AbangBakso/Info.plist
       properties:
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         NSLocationWhenInUseUsageDescription: Your app needs location permission to access the app
         UILaunchScreen: []
         UIAppFonts:

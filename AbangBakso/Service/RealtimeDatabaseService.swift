@@ -39,9 +39,9 @@ class RealtimeDatabaseServiceImpl: FirestoreService {
         // Set the onDisconnect value if provided
         reference.onDisconnectSetValue(disconnectValue) { error, _ in
             if let error = error {
-                print("Error setting onDisconnect value: \(error.localizedDescription)")
+                log("Error setting onDisconnect value: \(error.localizedDescription)")
             } else {
-                print("onDisconnect value set successfully.")
+                log("onDisconnect value set successfully.")
             }
         }
         var ref: DatabaseQuery = reference.queryOrderedByKey()
@@ -52,7 +52,7 @@ class RealtimeDatabaseServiceImpl: FirestoreService {
         // Start observing changes
         return ref.observeValuePublisher()
             .map { [weak self] (snapshots: [[String: Any]]) in
-                print("==== new snap \(snapshots)")
+                log("==== new snap \(snapshots)")
                 return snapshots.map { DocumentSnapshotWrapper(type: Collection(rawValue: self?.path ?? ""), data: $0, isExists: true) }
             }
             .replaceError(with: [])

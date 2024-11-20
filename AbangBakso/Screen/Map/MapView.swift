@@ -63,7 +63,7 @@ struct MapView: View {
         case .background:
             mapVM.setOnline(false)
         default:
-            print("no action for \(scenePhase)")
+            log("no action for \(scenePhase)")
         }
     }
 

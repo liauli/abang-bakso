@@ -37,20 +37,20 @@ final class LocationRepositoryImpl: NSObject, LocationRepository, CLLocationMana
             manager.requestWhenInUseAuthorization()
 
         case .restricted:
-            print("Location restricted")
+            log("Location restricted")
 
         case .denied:
-            print("Location denied")
+            log("Location denied")
 
         case .authorizedAlways, .authorizedWhenInUse:
-            print("Location authorized")
+            log("Location authorized")
             if let initialLocation = manager.location?.coordinate {
-                print("location! \(initialLocation)")
+                log("location! \(initialLocation)")
                 locationSubject.send(initialLocation)
             }
 
         @unknown default:
-            print("Location service disabled")
+            log("Location service disabled")
         }
     }
 
@@ -60,7 +60,7 @@ final class LocationRepositoryImpl: NSObject, LocationRepository, CLLocationMana
 
     internal func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.first?.coordinate {
-            print("location! 2 \(location)")
+            log("location! 2 \(location)")
             locationSubject.send(location)
         }
     }
