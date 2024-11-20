@@ -46,7 +46,7 @@ jobs:
       - name: Convert Coverage to SonarQube Format
         run: |
           mkdir -p coverage
-          bash ./xccov-to-sonarqube-generic.sh ./fastlane/test_output/report.xcresult/ > coverage/sonarqube-generic-coverage.xml
+          bash ./scripts/xccov-to-sonarqube-generic.sh ./test_output/report.xcresult/ > coverage/sonarqube-generic-coverage.xml
       - name: SonarQube Cloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
