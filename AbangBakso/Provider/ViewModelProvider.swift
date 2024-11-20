@@ -10,9 +10,7 @@ import Foundation
 class ViewModelProvider {
     static let shared = ViewModelProvider()
     private let domain = DomainProvider.shared
-    private init() {
-
-    }
+    private init() {}
 
     func createLoginViewModel() -> LoginViewModel {
         return LoginViewModel(

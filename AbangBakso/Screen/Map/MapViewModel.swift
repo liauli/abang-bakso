@@ -46,7 +46,7 @@ extension MapViewModel {
         observeUser.execute().sink { _ in
             // comp
         } receiveValue: { users in
-            print("=== update users \(users)")
+            log("=== update users \(users)")
             self.customers = users
         }.store(in: &cancellabels)
     }

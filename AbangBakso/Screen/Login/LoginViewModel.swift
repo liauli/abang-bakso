@@ -11,12 +11,13 @@ import FirebaseFirestore
 import CoreLocation
 
 class LoginViewModel: ObservableObject {
+    // View Input
     @Published var name: String = ""
     @Published var role: Collection?
     @Published var isTermChecked: Bool = false
-
     @Published var user: User?
 
+    // View Output
     @Published private(set) var isButtonEnabled: Bool = false
     @Published private(set) var isLoggedIn: Bool = false
 
@@ -98,7 +99,7 @@ extension LoginViewModel {
 
 // MARK: private functions
 extension LoginViewModel {
-    fileprivate func createUserPayload(for role: Collection) -> User {
+    private func createUserPayload(for role: Collection) -> User {
         return User(
             type: role,
             name: name,

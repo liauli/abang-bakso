@@ -11,4 +11,13 @@ import Foundation
 enum Collection: String, Codable, CaseIterable {
     case seller
     case customer
+    
+    func getDisplayName() -> String {
+        switch self {
+        case .seller:
+            "Tukang Bakso"
+        case .customer:
+            "Customer"
+        }
+    }
 }

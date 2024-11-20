@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SelectableMenuView: View {
     @Binding var selectedOption: Collection?
-    let options: [String]
+    let options: [Collection]
     let placeholder: String
     let hintColor: Color
     let selectedColor: Color
@@ -21,9 +21,9 @@ struct SelectableMenuView: View {
             Menu {
                 ForEach(options, id: \.self) { option in
                     Button(action: {
-                        selectedOption = Collection(rawValue: option)
+                        selectedOption = option
                     }, label: {
-                        Text(option)
+                        Text(option.getDisplayName())
                             .foregroundColor(.primary) // Or your custom color
                             .padding()
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -31,7 +31,7 @@ struct SelectableMenuView: View {
                     })
                 }
             } label: {
-                Text(selectedOption != nil ? selectedOption?.rawValue ?? "" : placeholder)
+                Text(selectedOption != nil ? selectedOption?.getDisplayName() ?? "" : placeholder)
                     .foregroundColor(selectedOption == nil ? hintColor : selectedColor) // Use hintColor for unselected
                     .padding(.vertical)
                     .padding(.leading, 8)

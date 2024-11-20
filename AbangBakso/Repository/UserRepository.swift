@@ -82,6 +82,16 @@ class UserRepositoryImpl: UserRepository {
             
     }
     
+    private func removeUser() -> AnyPublisher<Void, FirestoreError> {
+        do {
+            try keychain.remove(forKey: KeychainKeys.user.rawValue)
+
+            return Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
+        } catch {
+            return Fail(error: FirestoreError.failedToDeleteUser(error)).eraseToAnyPublisher()
+        }
+    }
+    
     func getLocal() -> AnyPublisher<User?, FirestoreError> {
         return Future { [weak self] promise in
             do {
