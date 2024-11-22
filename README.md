@@ -34,11 +34,6 @@ Before starting with the installation, ensure you have the following tools insta
      sudo gem install cocoapods
      ```
 
-3. **Fastlane**: Automates beta distribution, release management, and more for iOS apps.
-   - Install using Homebrew:
-     ```bash
-     brew install fastlane
-     ```
 ### Steps
 To run the **Abang Bakso** app locally on your machine, follow these steps:
 
@@ -51,11 +46,7 @@ To run the **Abang Bakso** app locally on your machine, follow these steps:
    ```
    xcodegen
    ```
-3. **Set up Firebase**:
-   - Go to the Firebase Console.
-   - Create a new project and configure Firebase for iOS.
-   - Download the GoogleService-Info.plist and add it to your Xcode project.
-     
+        
 4. **Run the project**:
     - Open the generated .xcworkspace file with Xcode and build the project.
     - Connect a physical device or use a simulator to test the app.
