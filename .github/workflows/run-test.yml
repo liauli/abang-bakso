@@ -3,6 +3,7 @@ name: run-tests
 on: [push]
 
 jobs:
+  
   setup:
     runs-on: macos-latest
     steps:
@@ -16,6 +17,10 @@ jobs:
           bundler-cache: true
       - name: Install dependencies
         run: bundle install
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Run Fastlane tests
+        run: bundle exec fastlane gym
       - name: Cache Build
         id: cache-build
         uses: actions/cache/save@v3
@@ -37,15 +42,13 @@ jobs:
         with:
           ruby-version: '3.0' 
           bundler-cache: true
-      - name: Install XcodeGen
-        run: brew install xcodegen
-      - name: Generate Xcode project
-        run: xcodegen generate
+      - name: Install dependencies
+        run: bundle install
       - name: Run Fastlane tests
         run: bundle exec fastlane unit_tests
 
-  lint:
-    needs: setup 
+  gym:
+    needs: setup  
     runs-on: macos-latest
     steps:
       - uses: actions/cache/restore@v3
@@ -58,7 +61,17 @@ jobs:
         with:
           ruby-version: '3.0' 
           bundler-cache: true
-      - name: Install swiftlint
-        run: brew install swiftlint
-      - name: Run Fastlane lint
-        run: bundle exec fastlane lint
+      - name: Install dependencies
+        run: bundle install
+      - name: Run Fastlane tests
+        run: bundle exec fastlane gym
+
+  secret_scan:
+     runs-on: macos-latest
+     steps:
+       - name: Checkout Repository
+         uses: actions/checkout@v2
+       - name: Install git-secrets
+         run: brew install git-secrets
+       - name: Run Secret Scan
+         run: git secrets --scan
