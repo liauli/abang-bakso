@@ -15,7 +15,40 @@ enum RealtimeDatabaseError: Error {
     case unknownError
     case firebaseError(String)
 }
-extension DatabaseReference {
+
+protocol DatabaseReferenceCombine: AutoMockable {
+    func addChild(_ path: String) -> DatabaseReferenceCombine
+    func setValuePublisher(_ data: [String: Any]) -> AnyPublisher<Void, FirestoreError>
+    func updateChildValuesPublisher(_ data: [String: Any]) -> AnyPublisher<Void, FirestoreError>
+    func removeValuePublisher() -> AnyPublisher<Void, FirestoreError>
+    func setupPresencePublisher(onlineValue: Any, offlineValue: Any) -> AnyPublisher<Void, FirestoreError>
+    func addQueryOrderedByKey() -> DatabaseQueryCombine
+    func addQueryOrdered(byChild key: String) -> DatabaseQueryCombine
+    func addOnDisconnectSetValue(_ value: Any, completion: @escaping (Error?, DatabaseReference?) -> Void)
+    func removeObservers()
+}
+
+extension DatabaseReference: DatabaseReferenceCombine {
+    func removeObservers() {
+        self.removeAllObservers()
+    }
+    
+    func addOnDisconnectSetValue(_ value: Any, completion: @escaping (Error?, DatabaseReference?) -> Void) {
+        return self.onDisconnectSetValue(value, withCompletionBlock: completion)
+    }
+    
+    func addQueryOrderedByKey() -> DatabaseQueryCombine {
+        return self.queryOrderedByKey()
+    }
+    
+    func addQueryOrdered(byChild key: String) -> DatabaseQueryCombine {
+        return self.queryOrdered(byChild: key)
+    }
+    
+    func addChild(_ path: String) -> DatabaseReferenceCombine {
+        return self.child(path)
+    }
+    
     // MARK: - Set Value
     func setValuePublisher(_ data: [String: Any]) -> AnyPublisher<Void, FirestoreError> {
         return Future<Void, FirestoreError> { promise in
@@ -87,8 +120,16 @@ extension DatabaseReference {
 
 }
 
+protocol DatabaseQueryCombine: AutoMockable {
+    func observeValuePublisher() -> AnyPublisher<[[String: Any]], FirestoreError>
+    func addQueryEqual(toValue value: Any) -> DatabaseQueryCombine
+}
 
-extension DatabaseQuery {
+extension DatabaseQuery: DatabaseQueryCombine {
+    func addQueryEqual(toValue value: Any) -> DatabaseQueryCombine {
+        return self.queryEqual(toValue: value)
+    }
+    
     // MARK: - Observe Values
     func observeValuePublisher() -> AnyPublisher<[[String: Any]], FirestoreError> {
         let subject = PassthroughSubject<[[String: Any]], FirestoreError>()

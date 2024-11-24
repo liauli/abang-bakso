@@ -13,5 +13,6 @@ unit.tests.mock:
   import:
   - Combine
   - CoreLocation
+  - FirebaseDatabase
   - FirebaseFirestore
   - Foundation

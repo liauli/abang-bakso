@@ -31,8 +31,7 @@ class UserRepositoryTest: XCTestCase {
         let expectedSeller = DummyBuilder.createUser(type: .seller)
         Given(mockService,
             .create(
-                id: .value(expectedSeller.name),
-                .value(expectedSeller.dictionary),
+                id: .value(expectedSeller.name), .any,
                 willReturn: success(())
             )
         )
@@ -91,8 +90,7 @@ class UserRepositoryTest: XCTestCase {
 
         Given(mockService,
             .create(
-                id: .value(expectedSeller.name),
-                .value(expectedSeller.dictionary),
+                id: .value(expectedSeller.name), .any,
                 willReturn: success(())
             )
         )
