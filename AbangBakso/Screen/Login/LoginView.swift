@@ -14,9 +14,14 @@ struct LoginView: View {
 
     var body: some View {
         VStack {
-            loginHeader
+            LoginHeader()
             VStack(alignment: .leading) {
-                loginForm.padding(.horizontal, 16)
+                VStack {
+                    loginUsernameField
+                    loginRoleSelection
+                    joinButton
+                    checkBoxView
+                }.padding(.horizontal, 16)
             }
             .background(.tselLightGrayBg)
             .border(.white, width: 1)
@@ -30,40 +35,37 @@ struct LoginView: View {
             loginVM.getCurrentLocation()
         }
     }
-
-    private var loginHeader: some View {
-        VStack {
-            Image("login_img")
-            Text("Verifikasi").fontBatikTselH4Bold()
-            Text("Masukkan nama dan role Anda di bawah ini:").fontBody2()
-        }
+    
+    private var loginUsernameField: some View {
+        LoginField(
+            text: $loginVM.name,
+            label: String(localized: "Nama"),
+            hint: String(localized: "Masukkan Nama"))
+        .padding(.top, 16)
     }
-
-    private var loginForm: some View {
-        VStack {
-            LoginField(
-                text: $loginVM.name,
-                label: String(localized: "Nama"),
-                hint: String(localized: "Masukkan Nama"))
-            .padding(.top, 16)
-            LoginRoleSelection(menus: userTypes, selectedMenu: $loginVM.role)
-
-            Button {
-                loginVM.doCreateUser()
-            } label: {
-                Text("Join")
-                    .fontBody1()
-                    .frame(maxWidth: .infinity, maxHeight: 40)
-            }
-            .cornerRadius(20)
-            .buttonStyle(.borderedProminent)
-            .tint(.tselRed)
-            .disabled(!loginVM.isTermChecked)
-
-            CheckboxView(
-                isChecked: $loginVM.isTermChecked,
-                label: String(localized: "login_checkbox_text"))
-                .padding(.vertical, 16)
+    
+    private var loginRoleSelection: some View {
+        LoginRoleSelection(menus: userTypes, selectedMenu: $loginVM.role)
+    }
+    
+    private var joinButton: some View {
+        Button {
+            loginVM.doCreateUser()
+        } label: {
+            Text("Join")
+                .fontBody1()
+                .frame(maxWidth: .infinity, maxHeight: 40)
         }
+        .cornerRadius(20)
+        .buttonStyle(.borderedProminent)
+        .tint(.tselRed)
+        .disabled(!loginVM.isButtonEnabled)
+    }
+    
+    private var checkBoxView: some View {
+        CheckboxView(
+            isChecked: $loginVM.isTermChecked,
+            label: String(localized: "login_checkbox_text"))
+            .padding(.vertical, 16)
     }
 }

@@ -24,7 +24,8 @@ targets:
     sources: 
       - AbangBakso
       - ./Fonts
-    settings: 
+    settings:
+      DEVELOPMENT_TEAM: 25X49278XB
       ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS: YES
       ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
     preBuildScripts:

@@ -20,4 +20,15 @@ enum Collection: String, Codable, CaseIterable {
             "Customer"
         }
     }
+    
+    static func set(displayName: String?) -> Collection? {
+        switch displayName {
+        case "Tukang Bakso":
+            return .seller
+        case "Customer":
+            return .customer
+        default:
+            return nil
+        }
+    }
 }
