@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+PROJECT_ROOT="/Users/runner/work/abang-bakso/abang-bakso/"
+
 function convert_xccov_to_xml {
   sed -n                                                                                       \
-      -e '/:$/s/&/\&amp;/g;s/^\(.*\):$/  <file path="\1">/p'                                   \
+      -e "/:$/s|$PROJECT_ROOT||; s/&/\&amp;/g; s/^\(.*\):$/  <file path=\"\1\">/p"             \
       -e 's/^ *\([0-9][0-9]*\): 0.*$/    <lineToCover lineNumber="\1" covered="false"\/>/p'    \
       -e 's/^ *\([0-9][0-9]*\): [1-9].*$/    <lineToCover lineNumber="\1" covered="true"\/>/p' \
       -e 's/^$/  <\/file>/p'
