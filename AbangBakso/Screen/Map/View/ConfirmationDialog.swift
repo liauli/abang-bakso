@@ -71,7 +71,3 @@ struct ConfirmationDialog: View {
         }
     }
 }
-
-#Preview {
-    ConfirmationDialog(isShowing: .constant(true))
-}

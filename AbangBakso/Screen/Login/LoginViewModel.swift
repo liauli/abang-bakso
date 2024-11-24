@@ -7,7 +7,6 @@
 
 import Foundation
 import Combine
-import FirebaseFirestore
 import CoreLocation
 
 class LoginViewModel: ObservableObject {
@@ -103,7 +102,7 @@ extension LoginViewModel {
         return User(
             type: role,
             name: name,
-            location: GeoPoint(latitude: location?.latitude ?? 0, longitude: location?.longitude ?? 0),
+            location: CLLocationCoordinate2D(latitude: location?.latitude ?? 0, longitude: location?.longitude ?? 0),
             lastActive: Date(),
             isActive: true
         )

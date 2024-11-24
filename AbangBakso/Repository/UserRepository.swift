@@ -7,36 +7,35 @@
 
 import Combine
 import Foundation
-import FirebaseFirestore
 
 protocol UserRepository: AutoMockable {
-    func create(user: User) -> AnyPublisher<Void, FirestoreError>
+    func create(user: User) -> AnyPublisher<Void, DatabaseError>
     func startObserveUser() -> AnyPublisher<[User], Never>
     func stopObserving()
-    func update(user: User) -> AnyPublisher<Void, FirestoreError>
-    func delete(user: User) -> AnyPublisher<Void, FirestoreError>
-    func getLocal() -> AnyPublisher<User?, FirestoreError>
+    func update(user: User) -> AnyPublisher<Void, DatabaseError>
+    func delete(user: User) -> AnyPublisher<Void, DatabaseError>
+    func getLocal() -> AnyPublisher<User?, DatabaseError>
 }
 
 class UserRepositoryImpl: UserRepository {
-    private let service: FirestoreService
+    private let service: DatabaseService
     private let keychain: KeychainFacade
 
-    init(_ service: FirestoreService,
+    init(_ service: DatabaseService,
          _ keychain: KeychainFacade
     ) {
         self.service = service
         self.keychain = keychain
     }
 
-    func update(user: User) -> AnyPublisher<Void, FirestoreError> {
+    func update(user: User) -> AnyPublisher<Void, DatabaseError> {
         return service.update(id: user.name, user.dictionary)
     }
 
-    func create(user: User) -> AnyPublisher<Void, FirestoreError> {
-        service.create(id: user.name, user.dictionary).flatMap { [weak self] _ -> AnyPublisher<Void, FirestoreError> in
+    func create(user: User) -> AnyPublisher<Void, DatabaseError> {
+        service.create(id: user.name, user.dictionary).flatMap { [weak self] _ -> AnyPublisher<Void, DatabaseError> in
             guard let self = self else {
-                return Fail(error: FirestoreError.failedToSaveUser).eraseToAnyPublisher()
+                return Fail(error: DatabaseError.failedToSaveUser).eraseToAnyPublisher()
             }
 
             return self.saveUser(user: user)
@@ -44,14 +43,14 @@ class UserRepositoryImpl: UserRepository {
         .eraseToAnyPublisher()
     }
 
-    private func saveUser(user: User) -> AnyPublisher<Void, FirestoreError> {
+    private func saveUser(user: User) -> AnyPublisher<Void, DatabaseError> {
         do {
             let data = try JSONEncoder().encode(user)
             try keychain.set(data: data, forKey: KeychainKeys.user.rawValue)
 
-            return Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
+            return Just(()).setFailureType(to: DatabaseError.self).eraseToAnyPublisher()
         } catch {
-            return Fail(error: FirestoreError.failedToSaveUser).eraseToAnyPublisher()
+            return Fail(error: DatabaseError.failedToSaveUser).eraseToAnyPublisher()
         }
     }
     
@@ -60,7 +59,7 @@ class UserRepositoryImpl: UserRepository {
     }
 
     func startObserveUser() -> AnyPublisher<[User], Never> {
-        var query = ("isActive", true)
+        let query = ("isActive", true)
         return service.startObserving(query: query, disconnectValue: [:])
             .map { documents -> [User] in
                 return documents.map { document in
@@ -70,29 +69,21 @@ class UserRepositoryImpl: UserRepository {
             .eraseToAnyPublisher()
     }
 
-    func delete(user: User) -> AnyPublisher<Void, FirestoreError> {
-        return service.delete(id: user.id).flatMap({ [weak self] _ -> AnyPublisher<Void, FirestoreError> in
-            do {
-                try self?.keychain.remove(forKey: KeychainKeys.user.rawValue)
-                return Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
-            } catch {
-                return Fail(error: FirestoreError.failedToDeleteUser(error)).eraseToAnyPublisher()
-            }
-        }).eraseToAnyPublisher()
-            
+    func delete(user: User) -> AnyPublisher<Void, DatabaseError> {
+        return service.delete(id: user.id).flatMap(removeUser).eraseToAnyPublisher()
     }
     
-    private func removeUser() -> AnyPublisher<Void, FirestoreError> {
+    private func removeUser() -> AnyPublisher<Void, DatabaseError> {
         do {
             try keychain.remove(forKey: KeychainKeys.user.rawValue)
 
-            return Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
+            return Just(()).setFailureType(to: DatabaseError.self).eraseToAnyPublisher()
         } catch {
-            return Fail(error: FirestoreError.failedToDeleteUser(error)).eraseToAnyPublisher()
+            return Fail(error: DatabaseError.failedToDeleteUser(error)).eraseToAnyPublisher()
         }
     }
     
-    func getLocal() -> AnyPublisher<User?, FirestoreError> {
+    func getLocal() -> AnyPublisher<User?, DatabaseError> {
         return Future { [weak self] promise in
             do {
                 if let userData = try self?.keychain.get(forKey: KeychainKeys.user.rawValue) {
@@ -103,7 +94,11 @@ class UserRepositoryImpl: UserRepository {
                     promise(.success(nil))
                 }
             } catch {
-                promise(.failure(.generalError(error)))
+                if let dbError = error as? DatabaseError {
+                      promise(.failure(dbError))
+                  } else {
+                      promise(.failure(.generalError(error)))
+                  }
             }
         }.eraseToAnyPublisher()
     }

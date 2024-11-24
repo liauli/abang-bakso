@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 protocol CreateUser: AutoMockable {
-    func execute(user: User) -> AnyPublisher<Void, FirestoreError>
+    func execute(user: User) -> AnyPublisher<Void, DatabaseError>
 }
 
 class CreateUserImpl: CreateUser {
@@ -19,7 +19,7 @@ class CreateUserImpl: CreateUser {
         self.userRepository = userRepository
     }
 
-    func execute(user: User) -> AnyPublisher<Void, FirestoreError> {
+    func execute(user: User) -> AnyPublisher<Void, DatabaseError> {
         return userRepository.create(user: user)
     }
 }

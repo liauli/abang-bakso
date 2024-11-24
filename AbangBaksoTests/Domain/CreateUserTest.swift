@@ -60,8 +60,14 @@ class CreateUserTests: XCTestCase {
     func testExecute_callsCreateOnUserRepository_andFails() {
         // Arrange
         let user = DummyBuilder.createUser(type: .seller)
-        let expectedError = FirestoreError.unknownType
-        Given(userRepositoryMock, .create(user: .value(user), willReturn: failed(expectedError)))
+        let expectedError = DatabaseError.unknownType
+        Given(
+            userRepositoryMock,
+                .create(
+                    user: .value(user),
+                    willReturn: failed(expectedError)
+                )
+        )
 
         // Act & Assert
         let expectation = self.expectation(description: "User creation fails")

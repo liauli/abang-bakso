@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseDatabase
 
 class ViewModelProvider {
     static let shared = ViewModelProvider()
@@ -109,15 +110,18 @@ class ServiceProvider {
 
     }
 
-    func createFirestoreService(type: Collection) -> FirestoreService {
-        return FirestoreServiceImpl(type)
-    }
-
     func createKeychainFacade() -> KeychainFacade {
         return KeychainFacadeImpl()
     }
     
-    func createRealtimeDatabaseService(type: String) -> FirestoreService {
-        return RealtimeDatabaseServiceImpl(path: type)
+    func createRealtimeDatabaseService(type: String) -> DatabaseService {
+        return RealtimeDatabaseServiceImpl(
+            reference: createFirebaseDatabase(type: type),
+            path: type)
+    }
+    
+    func createFirebaseDatabase(type: String) -> DatabaseReferenceCombine {
+        return Database.database().reference().child(type)
+
     }
 }

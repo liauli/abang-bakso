@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 protocol GetCurrentUser: AutoMockable {
-    func execute() -> AnyPublisher<User?, FirestoreError>
+    func execute() -> AnyPublisher<User?, DatabaseError>
 }
 
 class GetCurrentUserImpl: GetCurrentUser {
@@ -19,7 +19,7 @@ class GetCurrentUserImpl: GetCurrentUser {
         self.userRepository = userRepository
     }
     
-    func execute() -> AnyPublisher<User?, FirestoreError> {
+    func execute() -> AnyPublisher<User?, DatabaseError> {
         return userRepository.getLocal()
     }
 }

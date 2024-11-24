@@ -68,3 +68,5 @@ fastlane/test_output
 *.xcodeproj/
 DerivedData/
 Info.plist
+test_output/
+fastlane/test_output

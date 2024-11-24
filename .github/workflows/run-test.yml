@@ -1,6 +1,12 @@
 name: run-tests
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   setup:
@@ -41,8 +47,58 @@ jobs:
         run: brew install xcodegen
       - name: Generate Xcode project
         run: xcodegen generate
+      - name: Generate Mocks
+        run: |
+          ./Pods/SwiftyMocky/bin/swiftymocky generate
+          ./Pods/SwiftyMocky/bin/swiftymocky autoimport
       - name: Run Fastlane tests
         run: bundle exec fastlane unit_tests
+        
+      - name: Convert Coverage to SonarQube Format
+        run: |
+          ls
+          mkdir -p coverage
+          bash ./scripts/xccov-to-sonarqube-generic.sh ./test_output/AbangBakso.xcresult/ > coverage/sonarqube-generic-coverage.xml
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonar coverage in workspace
+          path: ./.github/workspace/sonarqube-generic-coverage.xml
+      - name: Archive code coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcresult
+          path: ./test_output/AbangBakso.xcresult
+      - name: Archive conversion
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: ./coverage/sonarqube-generic-coverage.xml
+      - name: Cache Build
+        id: cache-build
+        uses: actions/cache/save@v3
+        with:
+          path: ./
+          key: ${{ github.sha }}-test
+      
+
+  sonar:
+    name: SonarQube Analysis
+    needs: test  
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - uses: actions/cache/restore@v3
+        id: restore-build
+        with:
+          path: ./
+          key: ${{ github.sha }}-test
+      - name: SonarQube Cloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   lint:
     needs: setup 

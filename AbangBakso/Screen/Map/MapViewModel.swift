@@ -8,7 +8,6 @@
 import Foundation
 import Combine
 import CoreLocation
-import FirebaseFirestore
 
 class MapViewModel: ObservableObject {
     @Published var user: User?
@@ -64,7 +63,7 @@ extension MapViewModel {
                 longitude: self.user?.location.longitude ?? 0)
             let distance = newLoc.distance(from: prevLoc)
             if distance >= 5 {
-                let geo = GeoPoint(latitude: loc.latitude, longitude: loc.longitude)
+                let geo = CLLocationCoordinate2D(latitude: loc.latitude, longitude: loc.longitude)
                 self.user?.location = geo
                 self.updateUserData()
             }

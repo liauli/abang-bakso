@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 protocol UpdateUser: AutoMockable {
-    func execute(user: User) -> AnyPublisher<Void, FirestoreError>
+    func execute(user: User) -> AnyPublisher<Void, DatabaseError>
 }
 
 class UpdateUserImpl: UpdateUser {
@@ -19,7 +19,7 @@ class UpdateUserImpl: UpdateUser {
         self.userRepository = userRepository
     }
 
-    func execute(user: User) -> AnyPublisher<Void, FirestoreError> {
+    func execute(user: User) -> AnyPublisher<Void, DatabaseError> {
         return userRepository.update(user: user)
     }
 }

@@ -10,7 +10,6 @@ import XCTest
 import Combine
 import CoreLocation
 import SwiftyMocky
-import FirebaseFirestore
 
 @testable import AbangBakso
 
@@ -59,7 +58,7 @@ final class MapViewModelTests: XCTestCase {
 
     func test_startObservingLocation_updatesUserLocationIfMoved() {
         // Arrange
-        let initialLocation = GeoPoint(latitude: 0, longitude: 0)
+        let initialLocation = CLLocationCoordinate2D(latitude: 0, longitude: 0)
         let newLocation = CLLocationCoordinate2D(latitude: 0.0001, longitude: 0.0001)
 
         viewModel.user = User(
@@ -75,7 +74,7 @@ final class MapViewModelTests: XCTestCase {
                 .execute(
                     user: .any,
                     willReturn:
-                        Just(()).setFailureType(to: FirestoreError.self)
+                        Just(()).setFailureType(to: DatabaseError.self)
                         .eraseToAnyPublisher()
                 )
         )
@@ -122,7 +121,7 @@ final class MapViewModelTests: XCTestCase {
             .execute(
                 user: .any,
                 willReturn: Just(()).setFailureType(
-                    to: FirestoreError.self).eraseToAnyPublisher()
+                    to: DatabaseError.self).eraseToAnyPublisher()
             )
         )
 
@@ -144,7 +143,7 @@ final class MapViewModelTests: XCTestCase {
                     user: .value(user),
                     willReturn:
                         Just(())
-                        .setFailureType(to: FirestoreError.self)
+                        .setFailureType(to: DatabaseError.self)
                         .eraseToAnyPublisher()
                 )
         )
