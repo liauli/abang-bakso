@@ -7,7 +7,6 @@
 import XCTest
 import Combine
 import CoreLocation
-import FirebaseFirestore
 import SwiftyMocky
 @testable import AbangBakso
 

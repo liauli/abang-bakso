@@ -11,7 +11,6 @@ import XCTest
 import Combine
 import CoreLocation
 import FirebaseDatabase
-import FirebaseFirestore
 import Foundation
 @testable import AbangBakso
 

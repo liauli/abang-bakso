@@ -5,7 +5,6 @@
 //  Created by aulia_nastiti on 05/11/24.
 //
 
-import FirebaseFirestore
 import Foundation
 
 @testable import AbangBakso

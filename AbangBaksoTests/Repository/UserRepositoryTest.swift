@@ -9,7 +9,6 @@ import Combine
 import Foundation
 import XCTest
 import SwiftyMocky
-import FirebaseFirestore
 
 @testable import AbangBakso
 
