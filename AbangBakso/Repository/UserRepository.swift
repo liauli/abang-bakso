@@ -70,15 +70,7 @@ class UserRepositoryImpl: UserRepository {
     }
 
     func delete(user: User) -> AnyPublisher<Void, DatabaseError> {
-        return service.delete(id: user.id).flatMap({ [weak self] _ -> AnyPublisher<Void, DatabaseError> in
-            do {
-                try self?.keychain.remove(forKey: KeychainKeys.user.rawValue)
-                return Just(()).setFailureType(to: DatabaseError.self).eraseToAnyPublisher()
-            } catch {
-                return Fail(error: DatabaseError.failedToDeleteUser(error)).eraseToAnyPublisher()
-            }
-        }).eraseToAnyPublisher()
-            
+        return service.delete(id: user.id).flatMap(removeUser).eraseToAnyPublisher()
     }
     
     private func removeUser() -> AnyPublisher<Void, DatabaseError> {
@@ -102,7 +94,11 @@ class UserRepositoryImpl: UserRepository {
                     promise(.success(nil))
                 }
             } catch {
-                promise(.failure(.generalError(error)))
+                if let dbError = error as? DatabaseError {
+                      promise(.failure(dbError))
+                  } else {
+                      promise(.failure(.generalError(error)))
+                  }
             }
         }.eraseToAnyPublisher()
     }
