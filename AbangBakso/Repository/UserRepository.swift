@@ -7,7 +7,6 @@
 
 import Combine
 import Foundation
-import FirebaseFirestore
 
 protocol UserRepository: AutoMockable {
     func create(user: User) -> AnyPublisher<Void, DatabaseError>
@@ -60,7 +59,7 @@ class UserRepositoryImpl: UserRepository {
     }
 
     func startObserveUser() -> AnyPublisher<[User], Never> {
-        var query = ("isActive", true)
+        let query = ("isActive", true)
         return service.startObserving(query: query, disconnectValue: [:])
             .map { documents -> [User] in
                 return documents.map { document in

@@ -61,7 +61,13 @@ class CreateUserTests: XCTestCase {
         // Arrange
         let user = DummyBuilder.createUser(type: .seller)
         let expectedError = FirestoreError.unknownType
-        Given(userRepositoryMock, .create(user: .value(user), willReturn: Fail(error: expectedError).eraseToAnyPublisher()))
+        Given(
+            userRepositoryMock,
+                .create(
+                    user: .value(user),
+                    willReturn: failed(expectedError)
+                )
+        )
 
         // Act & Assert
         let expectation = self.expectation(description: "User creation fails")

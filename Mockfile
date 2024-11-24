@@ -14,5 +14,4 @@ unit.tests.mock:
   - Combine
   - CoreLocation
   - FirebaseDatabase
-  - FirebaseFirestore
   - Foundation

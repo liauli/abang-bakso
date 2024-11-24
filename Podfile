@@ -6,7 +6,6 @@ target 'AbangBakso' do
   use_frameworks!
 
   # Pods for AbangBakso
-  pod 'FirebaseFirestore'
   pod 'FirebaseAnalytics'
   pod 'FirebaseCrashlytics'
   pod 'FirebaseDatabase'

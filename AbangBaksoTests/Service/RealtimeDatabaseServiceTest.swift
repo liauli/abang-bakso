@@ -230,7 +230,9 @@ class RealtimeDatabaseServiceImplTests: XCTestCase {
     func testStartObserving_onDisconnectFailure() {
         // Arrange
         let disconnectValue = ["key": "value"]
-        let expectedError = NSError(domain: "TestError", code: 123, userInfo: [NSLocalizedDescriptionKey: "Simulated error"])
+        let expectedError = NSError(
+            domain: "TestError", code: 123, userInfo: [NSLocalizedDescriptionKey: "Simulated error"]
+        )
         let mockQuery = DatabaseQueryCombineMock()
         
         Given(mockReference, .addQueryOrderedByKey(willReturn: mockQuery))

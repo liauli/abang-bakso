@@ -21,7 +21,6 @@ protocol DatabaseService: AutoMockable {
 }
 
 class RealtimeDatabaseServiceImpl: DatabaseService {
-    var observeHandle: DatabaseHandle? = nil
     private let reference: DatabaseReferenceCombine
     private let path: String
 
@@ -82,9 +81,7 @@ class RealtimeDatabaseServiceImpl: DatabaseService {
 
     // MARK: - Stop Observing
     func stopObserving() {
-        if let handle = observeHandle {
-            reference.removeObservers()
-        }
+        reference.removeObservers()
     }
 
     // MARK: - Delete
