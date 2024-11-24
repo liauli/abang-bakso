@@ -110,15 +110,11 @@ class ServiceProvider {
 
     }
 
-    func createFirestoreService(type: Collection) -> FirestoreService {
-        return FirestoreServiceImpl(type)
-    }
-
     func createKeychainFacade() -> KeychainFacade {
         return KeychainFacadeImpl()
     }
     
-    func createRealtimeDatabaseService(type: String) -> FirestoreService {
+    func createRealtimeDatabaseService(type: String) -> DatabaseService {
         return RealtimeDatabaseServiceImpl(
             reference: createFirebaseDatabase(type: type),
             path: type)

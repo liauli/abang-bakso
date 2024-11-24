@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 protocol DeleteUser: AutoMockable {
-    func execute(user: User) -> AnyPublisher<Void, FirestoreError>
+    func execute(user: User) -> AnyPublisher<Void, DatabaseError>
 }
 
 class DeleteUserImpl: DeleteUser {
@@ -19,7 +19,7 @@ class DeleteUserImpl: DeleteUser {
         self.userRepository = userRepository
     }
 
-    func execute(user: User) -> AnyPublisher<Void, FirestoreError> {
+    func execute(user: User) -> AnyPublisher<Void, DatabaseError> {
         return userRepository.delete(user: user)
     }
 }

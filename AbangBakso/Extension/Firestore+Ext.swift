@@ -29,11 +29,11 @@ extension CollectionReference {
         for id: String,
         data: [String: Any],
         merge: Bool = true
-    ) -> AnyPublisher<Void, FirestoreError> {
+    ) -> AnyPublisher<Void, DatabaseError> {
         Future { promise in
             self.document(id).setData(data, merge: merge) { error in
                 if let error = error {
-                    promise(.failure(FirestoreError.snapshotError(error)))
+                    promise(.failure(DatabaseError.snapshotError(error)))
                 } else {
                     promise(.success(()))
                 }
@@ -42,7 +42,7 @@ extension CollectionReference {
         .eraseToAnyPublisher()
     }
 
-    func setDocumentIfNotExists(for id: String, data: [String: Any]) -> AnyPublisher<Void, FirestoreError> {
+    func setDocumentIfNotExists(for id: String, data: [String: Any]) -> AnyPublisher<Void, DatabaseError> {
             let documentRef = self.document(id)
 
             return Future { [weak self] promise in
@@ -62,19 +62,19 @@ extension CollectionReference {
     private func handleDataPromise(
         _ documentRef: DocumentReference,
         data: [String: Any],
-        completionHandler: @escaping (Bool, FirestoreError?) -> Void
+        completionHandler: @escaping (Bool, DatabaseError?) -> Void
     ) {
         documentRef.getDocument { snapshot, error in
             if let error = error {
-                completionHandler(false, FirestoreError.snapshotError(error))
+                completionHandler(false, DatabaseError.snapshotError(error))
             } else if snapshot?.exists == true {
                 // Document already exists, return a custom error
-                completionHandler(false, FirestoreError.documentExists)
+                completionHandler(false, DatabaseError.documentExists)
             } else {
                 // Document does not exist, proceed with adding it
                 documentRef.setData(data) { error in
                     if let error = error {
-                        completionHandler(false, FirestoreError.snapshotError(error))
+                        completionHandler(false, DatabaseError.snapshotError(error))
                     } else {
                         completionHandler(true, nil)
                     }
@@ -83,7 +83,7 @@ extension CollectionReference {
         }
     }
 
-    func deleteDocument(withID documentID: String) -> AnyPublisher<Void, FirestoreError> {
+    func deleteDocument(withID documentID: String) -> AnyPublisher<Void, DatabaseError> {
             let documentRef = self.document(documentID)
 
             return Future { promise in
@@ -102,8 +102,8 @@ extension CollectionReference {
 extension Query {
     func snapshotPublisher(
         listenerReg: @escaping (ListenerRegistration) -> Void
-    ) -> AnyPublisher<QuerySnapshot, FirestoreError> {
-        let subject = PassthroughSubject<QuerySnapshot, FirestoreError>()
+    ) -> AnyPublisher<QuerySnapshot, DatabaseError> {
+        let subject = PassthroughSubject<QuerySnapshot, DatabaseError>()
 
         let listener = self.addSnapshotListener { snapshot, error in
             if let error = error {

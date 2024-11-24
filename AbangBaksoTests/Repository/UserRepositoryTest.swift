@@ -16,7 +16,7 @@ import FirebaseFirestore
 class UserRepositoryTest: XCTestCase {
     private var sut: UserRepository!
 
-    private var mockService = FirestoreServiceMock()
+    private var mockService = DatabaseServiceMock()
     private var mockKeychain = KeychainFacadeMock()
 
     private var cancellables: Set<AnyCancellable> = []

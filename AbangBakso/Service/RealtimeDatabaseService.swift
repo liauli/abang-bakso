@@ -9,7 +9,18 @@ import Combine
 import Foundation
 import FirebaseDatabase
 
-class RealtimeDatabaseServiceImpl: FirestoreService {
+protocol DatabaseService: AutoMockable {
+    func create(id: String, _ data: [String: Any]) -> AnyPublisher<Void, DatabaseError>
+    func update(id: String, _ data: [String: Any]) -> AnyPublisher<Void, DatabaseError>
+    func startObserving(
+        query: (String, Any)?,
+        disconnectValue: [String: Any]
+    ) -> AnyPublisher<[DocumentSnapshotWrapper], Never>
+    func stopObserving()
+    func delete(id: String) -> AnyPublisher<Void, DatabaseError>
+}
+
+class RealtimeDatabaseServiceImpl: DatabaseService {
     var observeHandle: DatabaseHandle? = nil
     private let reference: DatabaseReferenceCombine
     private let path: String
@@ -20,12 +31,12 @@ class RealtimeDatabaseServiceImpl: FirestoreService {
     }
 
     // MARK: - Create
-    func create(id: String, _ data: [String: Any]) -> AnyPublisher<Void, FirestoreError> {
+    func create(id: String, _ data: [String: Any]) -> AnyPublisher<Void, DatabaseError> {
         reference.addChild(id).setValuePublisher(data)
     }
 
     // MARK: - Update
-    func update(id: String, _ data: [String: Any]) -> AnyPublisher<Void, FirestoreError> {
+    func update(id: String, _ data: [String: Any]) -> AnyPublisher<Void, DatabaseError> {
         reference.addChild(id).updateChildValuesPublisher(data)
     }
     
@@ -77,7 +88,7 @@ class RealtimeDatabaseServiceImpl: FirestoreService {
     }
 
     // MARK: - Delete
-    func delete(id: String) -> AnyPublisher<Void, FirestoreError> {
+    func delete(id: String) -> AnyPublisher<Void, DatabaseError> {
         reference.addChild(id).removeValuePublisher()
     }
 }

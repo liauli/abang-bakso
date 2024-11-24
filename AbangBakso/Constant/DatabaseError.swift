@@ -1,5 +1,5 @@
 //
-//  FirestoreError.swift
+//  DatabaseError.swift
 //  AbangBakso
 //
 //  Created by aulia_nastiti on 01/11/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum FirestoreError: Error, Equatable {
+enum DatabaseError: Error, Equatable {
 
     case documentExists
     case snapshotError(_ error: Error)
@@ -18,7 +18,7 @@ enum FirestoreError: Error, Equatable {
     case failedToDeleteUser(_ error: Error)
     case generalError(_ error: Error)
 
-    static func == (lhs: FirestoreError, rhs: FirestoreError) -> Bool {
+    static func == (lhs: DatabaseError, rhs: DatabaseError) -> Bool {
             switch (lhs, rhs) {
             case (.documentExists, .documentExists):
                 return true
