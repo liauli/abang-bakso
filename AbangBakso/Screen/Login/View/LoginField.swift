@@ -25,7 +25,3 @@ struct LoginField: View {
         }
     }
 }
-
-#Preview {
-    LoginField(text: .constant("Nama"), label: "Nama", hint: "Nama")
-}

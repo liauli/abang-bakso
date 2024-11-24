@@ -45,7 +45,3 @@ struct SelectableMenuView: View {
         .frame(maxWidth: .infinity)
     }
 }
-
-// #Preview {
-//    SelectableMenuView()
-// }

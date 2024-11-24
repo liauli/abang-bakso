@@ -102,7 +102,3 @@ struct MapView: View {
         )
     }
 }
-
-#Preview {
-    MapView(user: User(type: .seller, [:]), mapVM: ViewModelProvider.shared.createMapViewModel(for: .customer))
-}

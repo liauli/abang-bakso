@@ -34,7 +34,3 @@ struct CustomMarker: View {
         }
     }
 }
-
-#Preview {
-    CustomMarker(type: .customer, name: "Lia")
-}
