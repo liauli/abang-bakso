@@ -56,13 +56,13 @@ struct ConfirmationDialog: View {
                             .padding()
                             .foregroundColor(.red)
                             .fontPoppins13()
-                            .background(RoundedRectangle(cornerRadius: 20).fill(.white).stroke(.tselRed))
+                            .background(RoundedRectangle(cornerRadius: 20).fill(.bg).stroke(.tselRed))
                     })
                     .padding([.leading, .trailing], 20)
                     .padding(.bottom, 24)
                 }
                 .frame(maxWidth: .infinity, maxHeight: 400)
-                .background(Color.white)
+                .background(Color.bg)
                 .cornerRadius(20)
 
             }

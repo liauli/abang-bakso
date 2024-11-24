@@ -23,3 +23,4 @@ class CreateUserImpl: CreateUser {
         return userRepository.create(user: user)
     }
 }
+

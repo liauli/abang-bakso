@@ -17,8 +17,13 @@ struct LoginRoleSelection: View {
                 .fontBody1()
                 .padding(.bottom, 2)
             SelectableMenuView(
-                selectedOption: $selectedMenu,
-                options: menus,
+                selectedOption: Binding(
+                    get: { selectedMenu?.getDisplayName() }, // Map `Collection?` to `String?`
+                    set: { newValue in
+                        selectedMenu = Collection.set(displayName: newValue) // Map `String?` back to `Collection?`
+                    }
+                ),
+                options: menus.map { $0.getDisplayName() },
                 placeholder: String(localized: "Masukkan Role"),
                 hintColor: .textFieldDefaultHint,
                 selectedColor: .primaryBlack,
