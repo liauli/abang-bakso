@@ -59,7 +59,7 @@ class UserRepositoryTest: XCTestCase {
 
     func test_create_failed_shouldFail() {
         let expectedCustomer = DummyBuilder.createUser(type: .customer)
-        let expectedError = FirestoreError.documentExists
+        let expectedError = DatabaseError.documentExists
         Given(mockService,
             .create(
                 id: .any, .any,
@@ -85,7 +85,7 @@ class UserRepositoryTest: XCTestCase {
 
     func test_create_sellerType_saveUser_keychainSetFailed_shouldFail() {
         let expectedSeller = DummyBuilder.createUser(type: .seller)
-        let expectedError = FirestoreError.failedToSaveUser
+        let expectedError = DatabaseError.failedToSaveUser
 
         Given(mockService,
             .create(
@@ -164,7 +164,7 @@ class UserRepositoryTest: XCTestCase {
                 .delete(
                     id: .value(user.id),
                     willReturn: Just(()).setFailureType(
-                        to: FirestoreError.self).eraseToAnyPublisher()
+                        to: DatabaseError.self).eraseToAnyPublisher()
                 )
         )
 
@@ -193,7 +193,7 @@ class UserRepositoryTest: XCTestCase {
     func test_deleteUser_failureInServiceDelete() {
         // Arrange
         let user = DummyBuilder.createUser(type: .customer)
-        let expectedError = FirestoreError.snapshotError(NSError(domain: "", code: -1, userInfo: nil))
+        let expectedError = DatabaseError.snapshotError(NSError(domain: "", code: -1, userInfo: nil))
 
         // Mock service.delete to return failure
         Given(mockService, .delete(id: .value(user.id), willReturn: Fail(error: expectedError).eraseToAnyPublisher()))
@@ -218,14 +218,14 @@ class UserRepositoryTest: XCTestCase {
     func test_deleteUser_failureInRemoveUser() {
         // Arrange
         let user = DummyBuilder.createUser(type: .customer)
-        let expectedError = FirestoreError.failedToDeleteUser(NSError(domain: "", code: -1, userInfo: nil))
+        let expectedError = DatabaseError.failedToDeleteUser(NSError(domain: "", code: -1, userInfo: nil))
 
         // Mock service.delete to return success
         Given(
             mockService, .delete(
                 id: .any,
                 willReturn: Just(()).setFailureType(
-                    to: FirestoreError.self).eraseToAnyPublisher()
+                    to: DatabaseError.self).eraseToAnyPublisher()
             )
         )
         // Mock keychain remove operation to fail

@@ -60,7 +60,7 @@ class CreateUserTests: XCTestCase {
     func testExecute_callsCreateOnUserRepository_andFails() {
         // Arrange
         let user = DummyBuilder.createUser(type: .seller)
-        let expectedError = FirestoreError.unknownType
+        let expectedError = DatabaseError.unknownType
         Given(
             userRepositoryMock,
                 .create(

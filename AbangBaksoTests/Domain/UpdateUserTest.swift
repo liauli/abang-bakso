@@ -39,7 +39,7 @@ final class UpdateUserImplTests: XCTestCase {
                 .update(
                     user: .value(user),
                     willReturn:
-                        Just(()).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
+                        Just(()).setFailureType(to: DatabaseError.self).eraseToAnyPublisher()
                 )
         )
 
@@ -62,7 +62,7 @@ final class UpdateUserImplTests: XCTestCase {
     func test_execute_returnsErrorFromRepository() {
         // Arrange
         let user = DummyBuilder.createUser(type: .customer)
-        let expectedError = FirestoreError.snapshotError(NSError(domain: "", code: -1, userInfo: nil))
+        let expectedError = DatabaseError.snapshotError(NSError(domain: "", code: -1, userInfo: nil))
         Given(
             userRepositoryMock,
                 .update(
@@ -72,7 +72,7 @@ final class UpdateUserImplTests: XCTestCase {
         )
 
         // Act
-        let expectation = XCTestExpectation(description: "Should return failure with FirestoreError")
+        let expectation = XCTestExpectation(description: "Should return failure with DatabaseError")
         updateUser.execute(user: user)
             .sink(receiveCompletion: { completion in
                 if case let .failure(error) = completion {

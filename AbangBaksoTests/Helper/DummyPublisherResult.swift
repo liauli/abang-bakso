@@ -11,15 +11,15 @@ import SwiftyMocky
 
 @testable import AbangBakso
 
-func success<T>(_ data: T) -> AnyPublisher<T, FirestoreError> {
-  return Just(data).setFailureType(to: FirestoreError.self).eraseToAnyPublisher()
+func success<T>(_ data: T) -> AnyPublisher<T, DatabaseError> {
+  return Just(data).setFailureType(to: DatabaseError.self).eraseToAnyPublisher()
 }
 
 func alwaysSuccess<T>(_ data: T) -> AnyPublisher<T, Never> {
   return Just(data).eraseToAnyPublisher()
 }
 
-func failed<T>(_ error: FirestoreError) -> AnyPublisher<T, FirestoreError> {
+func failed<T>(_ error: DatabaseError) -> AnyPublisher<T, DatabaseError> {
   return Fail(error: error).eraseToAnyPublisher()
 }
 

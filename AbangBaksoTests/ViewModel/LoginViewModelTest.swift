@@ -132,7 +132,7 @@ final class LoginViewModelTests: XCTestCase {
                 .execute(
                     user: .matching { $0.name == expectedUser.name },
                     willReturn:
-                        failed(FirestoreError.documentExists).eraseToAnyPublisher()
+                        failed(DatabaseError.documentExists).eraseToAnyPublisher()
                 )
         )
 
@@ -151,7 +151,7 @@ final class LoginViewModelTests: XCTestCase {
         let expectedUser = User(
             type: .seller,
             name: "Seller",
-            location: GeoPoint(latitude: 0, longitude: 0),
+            location: CLLocationCoordinate2D(latitude: 0, longitude: 0),
             lastActive: Date(),
             isActive: true)
 
@@ -160,7 +160,7 @@ final class LoginViewModelTests: XCTestCase {
                 user: .matching { $0.name == expectedUser.name },
                 willReturn:
                     Just(())
-                    .setFailureType(to: FirestoreError.self)
+                    .setFailureType(to: DatabaseError.self)
                     .eraseToAnyPublisher()
             )
         )

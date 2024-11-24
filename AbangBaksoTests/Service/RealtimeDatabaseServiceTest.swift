@@ -62,7 +62,7 @@ class RealtimeDatabaseServiceImplTests: XCTestCase {
         // Arrange
         let data = ["key": "value"]
         let id = "user123"
-        let expectedError = FirestoreError.unknownType
+        let expectedError = DatabaseError.unknownType
         let mockChildReference = DatabaseReferenceCombineMock()
         
         Given(mockReference, .addChild(.value(id), willReturn: mockChildReference))
@@ -120,7 +120,7 @@ class RealtimeDatabaseServiceImplTests: XCTestCase {
         // Arrange
         let data = ["key": "updatedValue"]
         let id = "user123"
-        let expectedError = FirestoreError.unknownType
+        let expectedError = DatabaseError.unknownType
         let mockChildReference = DatabaseReferenceCombineMock()
         
         Given(mockReference, .addChild(.value(id), willReturn: mockChildReference))
@@ -172,7 +172,7 @@ class RealtimeDatabaseServiceImplTests: XCTestCase {
     
     func testStartObserving_shouldHandleFailure() {
         // Arrange
-        let expectedError = FirestoreError.snapshotError(NSError(domain: "", code: 500))
+        let expectedError = DatabaseError.snapshotError(NSError(domain: "", code: 500))
         Given(mockReference, .addQueryOrderedByKey(willReturn: mockQuery))
         Given(mockQuery, .observeValuePublisher(willReturn: failed(expectedError)))
 
@@ -260,10 +260,6 @@ class RealtimeDatabaseServiceImplTests: XCTestCase {
     }
     
     func testStopObserving_shouldRemoveObserver() {
-        // Arrange
-        let handler: DatabaseHandle = DatabaseHandle()
-        service.observeHandle = handler
-       
         // Act
         service.stopObserving()
 
@@ -301,7 +297,7 @@ class RealtimeDatabaseServiceImplTests: XCTestCase {
     func testDelete_shouldHandleFailure() {
         // Arrange
         let id = "user123"
-        let expectedError = FirestoreError.documentExists
+        let expectedError = DatabaseError.documentExists
         let mockChildReference = DatabaseReferenceCombineMock()
         
         Given(mockReference, .addChild(.value(id), willReturn: mockChildReference))

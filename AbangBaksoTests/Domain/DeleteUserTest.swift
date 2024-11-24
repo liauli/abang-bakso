@@ -35,7 +35,7 @@ class DeleteUserTests: XCTestCase {
 
         Given(userRepositoryMock, .delete(user: .value(mockUser), willReturn: success(())))
 
-        var resultError: FirestoreError?
+        var resultError: DatabaseError?
         sut.execute(user: mockUser)
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
@@ -52,7 +52,7 @@ class DeleteUserTests: XCTestCase {
     func testExecute_WhenDeleteUserFails_ShouldReturnError() {
         let mockUser = User(type: .customer, ["name": "John Doe"])
 
-        let expectedError = FirestoreError.failedToDeleteUser(NSError(domain: "", code: 0))
+        let expectedError = DatabaseError.failedToDeleteUser(NSError(domain: "", code: 0))
         Given(userRepositoryMock, .delete(user: .value(mockUser), willReturn: failed(expectedError)))
 
         let expectation = XCTestExpectation(description: "Should fail")

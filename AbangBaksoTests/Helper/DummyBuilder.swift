@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 @testable import AbangBakso
 
@@ -14,7 +15,7 @@ enum DummyBuilder {
         return User(
             type: type,
             name: name,
-            location: GeoPoint(latitude: 0.0, longitude: 0.0),
+            location: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0),
             lastActive: Date(),
             isActive: false
         )
