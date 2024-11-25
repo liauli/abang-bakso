@@ -44,9 +44,8 @@ extension MapViewModel {
     func startObservingCustomers() {
         observeUser.execute().sink { _ in
             // comp
-        } receiveValue: { users in
-            log("=== update users \(users)")
-            self.customers = users
+        } receiveValue: { [weak self] users in
+            self?.customers = users
         }.store(in: &cancellabels)
     }
 
@@ -55,7 +54,7 @@ extension MapViewModel {
             return
         }
         observeLocation?.execute().sink { _ in
-            // comp
+            // no op
         } receiveValue: { [unowned self] loc in
             let newLoc = CLLocation(latitude: loc.latitude, longitude: loc.longitude)
             let prevLoc = CLLocation(
@@ -95,7 +94,6 @@ extension MapViewModel {
         if let user = user {
             deleteUser
                 .execute(user: user).sink { [weak self] _ in
-                    // comp
                     self?.user = nil
                 } receiveValue: { [weak self] _ in
                     self?.user = nil

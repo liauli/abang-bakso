@@ -1,20 +1,13 @@
 //
-//  RealtimeDatabase+Ext.swift
+//  DatabaseReference+Ext.swift
 //  AbangBakso
 //
-//  Created by aulia_nastiti on 19/11/24.
+//  Created by aulia_nastiti on 24/11/24.
 //
 
-import Foundation
-
 import Combine
+import Foundation
 import FirebaseDatabase
-
-enum RealtimeDatabaseError: Error {
-    case decodingError
-    case unknownError
-    case firebaseError(String)
-}
 
 protocol DatabaseReferenceCombine: AutoMockable {
     func addChild(_ path: String) -> DatabaseReferenceCombine
@@ -51,8 +44,8 @@ extension DatabaseReference: DatabaseReferenceCombine {
     
     // MARK: - Set Value
     func setValuePublisher(_ data: [String: Any]) -> AnyPublisher<Void, DatabaseError> {
-        return Future<Void, DatabaseError> { promise in
-            self.setValue(data) { error, _ in
+        return Future<Void, DatabaseError> { [weak self] promise in
+            self?.setValue(data) { error, _ in
                 if let error = error {
                     promise(.failure(.generalError(error)))
                 } else {
@@ -65,8 +58,8 @@ extension DatabaseReference: DatabaseReferenceCombine {
 
     // MARK: - Update Value
     func updateChildValuesPublisher(_ data: [String: Any]) -> AnyPublisher<Void, DatabaseError> {
-        Future<Void, DatabaseError> { promise in
-            self.updateChildValues(data) { error, _ in
+        Future<Void, DatabaseError> { [weak self] promise in
+            self?.updateChildValues(data) { error, _ in
                 if let error = error {
                     promise(.failure(.generalError(error)))
                 } else {
@@ -79,8 +72,8 @@ extension DatabaseReference: DatabaseReferenceCombine {
 
     // MARK: - Remove Value
     func removeValuePublisher() -> AnyPublisher<Void, DatabaseError> {
-        Future<Void, DatabaseError> { promise in
-            self.removeValue { error, _ in
+        Future<Void, DatabaseError> { [weak self] promise in
+            self?.removeValue { error, _ in
                 if let error = error {
                     promise(.failure(.generalError(error)))
                 } else {
@@ -97,16 +90,16 @@ extension DatabaseReference: DatabaseReferenceCombine {
     ///   - onlineValue: The value to set when the user is online (e.g., `"online"` or a timestamp).
     ///   - offlineValue: The value to set when the user disconnects (e.g., `"offline"` or a timestamp).
     func setupPresencePublisher(onlineValue: Any, offlineValue: Any) -> AnyPublisher<Void, DatabaseError> {
-        Future<Void, DatabaseError> { promise in
+        Future<Void, DatabaseError> { [weak self] promise in
             // Set the online value
-            self.setValue(onlineValue) { error, _ in
+            self?.setValue(onlineValue) { [weak self] error, _ in
                 if let error = error {
                     promise(.failure(.generalError(error)))
                     return
                 }
 
                 // Set the offline value on disconnect
-                self.onDisconnectSetValue(offlineValue) { error, _ in
+                self?.onDisconnectSetValue(offlineValue) { error, _ in
                     if let error = error {
                         promise(.failure(.generalError(error)))
                     } else {
@@ -118,40 +111,4 @@ extension DatabaseReference: DatabaseReferenceCombine {
         .eraseToAnyPublisher()
     }
 
-}
-
-protocol DatabaseQueryCombine: AutoMockable {
-    func observeValuePublisher() -> AnyPublisher<[[String: Any]], DatabaseError>
-    func addQueryEqual(toValue value: Any) -> DatabaseQueryCombine
-}
-
-extension DatabaseQuery: DatabaseQueryCombine {
-    func addQueryEqual(toValue value: Any) -> DatabaseQueryCombine {
-        return self.queryEqual(toValue: value)
-    }
-    
-    // MARK: - Observe Values
-    func observeValuePublisher() -> AnyPublisher<[[String: Any]], DatabaseError> {
-        let subject = PassthroughSubject<[[String: Any]], DatabaseError>()
-        
-        let handle = self.observe(.value, with: { snapshot in
-            var results: [[String: Any]] = []
-            if let children = snapshot.children.allObjects as? [DataSnapshot] {
-                for child in children {
-                    if let value = child.value as? [String: Any] {
-                        results.append(value)
-                    }
-                }
-            }
-            subject.send(results)
-        }, withCancel: { error in
-            subject.send(completion: .failure(.generalError(error)))
-        })
-        
-        // Return a publisher and manage the observer handle
-        return subject
-            .handleEvents(receiveCancel: {
-                self.removeObserver(withHandle: handle)
-            }).eraseToAnyPublisher()
-    }
 }
