@@ -106,12 +106,10 @@ class RepositoryProvider {
 class ServiceProvider {
     static let shared = ServiceProvider()
     
-    private var keychainFacade: KeychainFacade? = nil
-    private var realtimeDatabaseService: DatabaseService? = nil
+    private var keychainFacade: KeychainFacade?
+    private var realtimeDatabaseService: DatabaseService?
 
-    private init() {
-
-    }
+    private init() {}
 
     func createKeychainFacade() -> KeychainFacade {
         guard let keychainFacade = keychainFacade else {
@@ -123,12 +121,12 @@ class ServiceProvider {
     }
     
     func createRealtimeDatabaseService(type: String) -> DatabaseService {
-        guard let db = realtimeDatabaseService else {
+        guard let database = realtimeDatabaseService else {
             return RealtimeDatabaseServiceImpl(
                 reference: createFirebaseDatabase(type: type),
                 path: type)
         }
-        return db
+        return database
         
     }
     

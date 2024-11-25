@@ -10,13 +10,10 @@ struct CustomMarker: View {
     var type: Collection
     var name: String
 
-    var body: some View {
-        ZStack(alignment: .leading) {
-            // Marker icon
-            Image(type == .customer ? "customer_icon" : "seller_icon")
-                .resizable()
-                .frame(width: 40, height: 40)
+    @State private var textWidth: CGFloat = 0 // Tracks the text width dynamically
 
+    var body: some View {
+        ZStack {
             // Name label
             Text(name)
                 .foregroundColor(.black)
@@ -25,9 +22,21 @@ struct CustomMarker: View {
                 .lineLimit(nil)
                 .background(Color.white)
                 .cornerRadius(10)
-                .frame(maxWidth: 200)
+                .frame(maxWidth: 300)
                 .fixedSize(horizontal: true, vertical: false)
-                .offset(x: 45, y: -2) 
+                .background(GeometryReader { geometry in
+                    // Measure the width of the text
+                    Color.clear
+                        .onAppear {
+                            textWidth = geometry.size.width
+                        }
+                })
+                .offset(x: textWidth / 2 + 16, y: -2) // Position based on text width
+
+            // Marker icon
+            Image(type == .customer ? "customer_icon" : "seller_icon")
+                .resizable()
+                .frame(width: 40, height: 40)
         }
     }
 }
